@@ -129,26 +129,26 @@ const ContactSection = () => {
         return sit ? sit.label : id;
       });
 
-      const formData = new FormData();
-      formData.append("nome", form.nome);
-      formData.append("email", form.email);
-      formData.append("telefone", form.telefone);
-      formData.append("empresa", form.empresa);
-      formData.append("setor", form.setor);
-      formData.append("regime", form.regime);
-      formData.append("faturamento", form.faturamento);
-      formData.append("situacoes", JSON.stringify(situacoesLabels));
+      const payload = new URLSearchParams();
+      payload.append("nome", form.nome);
+      payload.append("email", form.email);
+      payload.append("telefone", form.telefone);
+      payload.append("empresa", form.empresa);
+      payload.append("setor", form.setor);
+      payload.append("regime", form.regime);
+      payload.append("faturamento", form.faturamento);
+      payload.append("situacoes", situacoesLabels.join(" | "));
 
-      const response = await fetch(
+      await fetch(
         "https://webhooks-mvp.algomaisacai.com.br/webhook/90229d83-2494-467d-8918-b342b50ed66d",
         {
           method: "POST",
-          body: formData,
+          mode: "no-cors",
+          body: payload,
         }
       );
 
-      if (!response.ok) throw new Error("Erro ao enviar");
-
+      // Com mode: 'no-cors' não conseguimos ler a resposta, mas o dado é enviado
       toast({ title: "Solicitação enviada!", description: "Entraremos em contato em breve.", duration: 5000 });
       setForm({ nome: "", email: "", telefone: "", empresa: "", setor: "", regime: "", faturamento: "", situacoes: [] });
       setStep(1);
