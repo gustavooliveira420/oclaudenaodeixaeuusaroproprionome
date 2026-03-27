@@ -129,11 +129,12 @@ const ContactSection = () => {
         return sit ? sit.label : id;
       });
 
-      const response = await fetch(
+      await fetch(
         "https://webhooks-mvp.algomaisacai.com.br/webhook/90229d83-2494-467d-8918-b342b50ed66d",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
           body: JSON.stringify({
             nome: form.nome,
             email: form.email,
@@ -146,8 +147,6 @@ const ContactSection = () => {
           }),
         }
       );
-
-      if (!response.ok) throw new Error("Erro ao enviar");
 
       toast({ title: "Solicitação enviada!", description: "Entraremos em contato em breve." });
       setForm({ nome: "", email: "", telefone: "", empresa: "", setor: "", regime: "", faturamento: "", situacoes: [] });
