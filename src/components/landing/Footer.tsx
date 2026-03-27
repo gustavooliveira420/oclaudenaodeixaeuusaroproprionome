@@ -2,10 +2,10 @@ const Footer = () => (
   <footer className="py-10 px-6 bg-primary border-t border-primary-foreground/10">
     <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       <span className="text-primary-foreground font-bold text-lg tracking-tight">
-        Henrique<span className="text-accent">.</span>Melo
+        Renegocia<span className="text-accent">.</span>Consultoria
       </span>
       <p className="text-primary-foreground/40 text-xs">
-        © {new Date().getFullYear()} Henrique Melo Advocacia. Todos os direitos reservados.
+        © {new Date().getFullYear()} Renegocia Consultoria. Todos os direitos reservados.
       </p>
     </div>
   </footer>

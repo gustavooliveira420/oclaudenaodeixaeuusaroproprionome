@@ -24,7 +24,7 @@ const Header = () => {
     >
       <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-16 md:h-20">
         <span className="text-primary-foreground font-bold text-lg tracking-tight">
-          Henrique<span className="text-accent">.</span>Melo
+          Renegocia<span className="text-accent">.</span>Consultoria
         </span>
         <Button variant="hero" size="sm" onClick={scrollToForm}>
           Agendar diagnóstico

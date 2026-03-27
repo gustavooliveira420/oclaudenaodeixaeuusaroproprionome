@@ -65,9 +65,9 @@ const Hero = () => {
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button
-              variant="heroOutline"
+              variant="hero"
               size="xl"
-              className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+              className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 group"
               onClick={() => window.open("https://wa.me/5500000000000", "_blank")}
             >
               Falar com especialista
