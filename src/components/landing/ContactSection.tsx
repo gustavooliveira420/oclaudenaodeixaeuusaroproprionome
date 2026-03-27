@@ -116,19 +116,47 @@ const ContactSection = () => {
 
   const prev = () => setStep((s) => Math.max(s - 1, 1));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.situacoes.length === 0) {
       toast({ title: "Selecione pelo menos uma situação", variant: "destructive" });
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const situacoesLabels = form.situacoes.map(id => {
+        const sit = SITUACOES.find(s => s.id === id);
+        return sit ? sit.label : id;
+      });
+
+      const response = await fetch(
+        "https://webhooks-mvp.algomaisacai.com.br/webhook/46e17c8b-142f-45d3-a364-486ad1db556e",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nome: form.nome,
+            email: form.email,
+            telefone: form.telefone,
+            empresa: form.empresa,
+            setor: form.setor,
+            regime: form.regime,
+            faturamento: form.faturamento,
+            situacoes: situacoesLabels,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Erro ao enviar");
+
       toast({ title: "Solicitação enviada!", description: "Entraremos em contato em breve." });
       setForm({ nome: "", email: "", telefone: "", empresa: "", setor: "", regime: "", faturamento: "", situacoes: [] });
       setStep(1);
-    }, 1000);
+    } catch {
+      toast({ title: "Erro ao enviar", description: "Tente novamente em instantes.", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputClass =
