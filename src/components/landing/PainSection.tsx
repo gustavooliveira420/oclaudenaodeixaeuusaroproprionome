@@ -9,31 +9,47 @@ const pains = [
 ];
 
 const PainSection = () => (
-  <section className="py-20 px-5 bg-secondary">
-    <div className="max-w-3xl mx-auto text-center">
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-2xl md:text-3xl font-bold text-foreground"
-      >
-        Você pode estar pagando mais impostos do que deveria
-      </motion.h2>
-
-      <div className="mt-10 space-y-5">
-        {pains.map((pain, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+  <section className="py-24 px-6">
+    <div className="max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        <div className="md:sticky md:top-32">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="flex items-start gap-4 text-left bg-background rounded-xl p-5 shadow-sm"
+            className="text-accent text-sm font-semibold tracking-widest uppercase"
           >
-            <pain.icon className="w-6 h-6 text-accent shrink-0 mt-0.5" />
-            <p className="text-foreground/80 text-sm md:text-base">{pain.text}</p>
-          </motion.div>
-        ))}
+            O problema
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="mt-4 text-2xl md:text-4xl font-bold text-foreground leading-tight"
+          >
+            Você pode estar pagando{" "}
+            <span className="text-accent">mais impostos</span> do que deveria
+          </motion.h2>
+        </div>
+
+        <div className="space-y-4">
+          {pains.map((pain, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="flex items-start gap-4 bg-card rounded-2xl p-6 border border-border hover:border-accent/30 transition-colors group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent/20 transition-colors">
+                <pain.icon className="w-5 h-5 text-accent" />
+              </div>
+              <p className="text-foreground/80 text-sm md:text-base leading-relaxed">{pain.text}</p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   </section>

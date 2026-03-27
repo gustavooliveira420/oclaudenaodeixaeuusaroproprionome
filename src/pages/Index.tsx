@@ -1,5 +1,6 @@
 import Header from "@/components/landing/Header";
 import Hero from "@/components/landing/Hero";
+import StatsSection from "@/components/landing/StatsSection";
 import PainSection from "@/components/landing/PainSection";
 import SolutionSection from "@/components/landing/SolutionSection";
 import BenefitsSection from "@/components/landing/BenefitsSection";
@@ -15,8 +16,9 @@ import Footer from "@/components/landing/Footer";
 const Index = () => (
   <>
     <Header />
-    <main className="pt-16">
+    <main>
       <Hero />
+      <StatsSection />
       <PainSection />
       <SolutionSection />
       <BenefitsSection />

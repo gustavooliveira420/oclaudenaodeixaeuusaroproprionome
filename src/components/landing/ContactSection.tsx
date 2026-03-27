@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowRight } from "lucide-react";
+import patternBg from "@/assets/pattern-bg.jpg";
 
 const ContactSection = () => {
   const { toast } = useToast();
@@ -24,23 +26,45 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contato" className="py-20 px-5 bg-primary">
-      <div className="max-w-lg mx-auto text-center">
+    <section id="contato" className="relative py-24 px-6 bg-primary overflow-hidden">
+      <div className="absolute inset-0 opacity-10">
+        <img src={patternBg} alt="" className="w-full h-full object-cover" loading="lazy" />
+      </div>
+
+      <div className="relative z-10 max-w-lg mx-auto text-center">
+        <motion.span
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-accent text-sm font-semibold tracking-widest uppercase"
+        >
+          Comece agora
+        </motion.span>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-2xl md:text-3xl font-bold text-primary-foreground"
+          transition={{ delay: 0.1 }}
+          className="mt-4 text-2xl md:text-4xl font-bold text-primary-foreground leading-tight"
         >
-          Descubra se sua empresa tem dinheiro parado
+          Descubra se sua empresa tem{" "}
+          <span className="text-accent">dinheiro parado</span>
         </motion.h2>
-        <p className="mt-3 text-primary-foreground/70 text-sm">Sem custo inicial</p>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.15 }}
+          className="mt-3 text-primary-foreground/50 text-sm"
+        >
+          Sem custo inicial · Diagnóstico gratuito
+        </motion.p>
 
         <motion.form
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.15 }}
+          transition={{ delay: 0.2 }}
           onSubmit={handleSubmit}
           className="mt-10 space-y-4"
         >
@@ -48,7 +72,7 @@ const ContactSection = () => {
             placeholder="Nome completo"
             value={form.nome}
             onChange={(e) => setForm({ ...form, nome: e.target.value })}
-            className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 h-12"
+            className="bg-primary-foreground/5 border-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/40 h-13 rounded-xl focus:border-accent"
             maxLength={100}
           />
           <Input
@@ -56,14 +80,14 @@ const ContactSection = () => {
             placeholder="E-mail profissional"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 h-12"
+            className="bg-primary-foreground/5 border-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/40 h-13 rounded-xl focus:border-accent"
             maxLength={255}
           />
           <Input
             placeholder="Nome da empresa"
             value={form.empresa}
             onChange={(e) => setForm({ ...form, empresa: e.target.value })}
-            className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 h-12"
+            className="bg-primary-foreground/5 border-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/40 h-13 rounded-xl focus:border-accent"
             maxLength={100}
           />
           <Input
@@ -71,11 +95,12 @@ const ContactSection = () => {
             placeholder="Telefone / WhatsApp"
             value={form.telefone}
             onChange={(e) => setForm({ ...form, telefone: e.target.value })}
-            className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 h-12"
+            className="bg-primary-foreground/5 border-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/40 h-13 rounded-xl focus:border-accent"
             maxLength={20}
           />
-          <Button variant="hero" size="xl" className="w-full" type="submit" disabled={loading}>
+          <Button variant="hero" size="xl" className="w-full group" type="submit" disabled={loading}>
             {loading ? "Enviando..." : "Agendar diagnóstico gratuito"}
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
         </motion.form>
       </div>
