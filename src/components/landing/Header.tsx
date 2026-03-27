@@ -1,15 +1,30 @@
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 const Header = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const scrollToForm = () => {
     document.getElementById("contato")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-primary/95 backdrop-blur-sm border-b border-primary-foreground/10">
-      <div className="max-w-5xl mx-auto flex items-center justify-between px-5 h-16">
+    <header
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        scrolled
+          ? "bg-primary/98 backdrop-blur-md shadow-lg"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-16 md:h-20">
         <span className="text-primary-foreground font-bold text-lg tracking-tight">
-          Henrique Melo
+          Henrique<span className="text-accent">.</span>Melo
         </span>
         <Button variant="hero" size="sm" onClick={scrollToForm}>
           Agendar diagnóstico

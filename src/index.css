@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,37 +7,39 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 215 25% 15%;
+    --foreground: 220 30% 12%;
 
-    --card: 210 20% 98%;
-    --card-foreground: 215 25% 15%;
+    --card: 210 25% 97%;
+    --card-foreground: 220 30% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 220 30% 12%;
 
-    --primary: 217 71% 20%;
+    --primary: 220 50% 14%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 20% 95%;
-    --secondary-foreground: 217 71% 20%;
+    --secondary: 210 20% 95%;
+    --secondary-foreground: 220 50% 14%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 12% 50%;
+    --muted: 210 15% 94%;
+    --muted-foreground: 215 12% 48%;
 
-    --accent: 210 100% 52%;
+    --accent: 168 65% 42%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214 20% 90%;
-    --input: 214 20% 90%;
-    --ring: 210 100% 52%;
+    --border: 214 18% 90%;
+    --input: 214 18% 90%;
+    --ring: 168 65% 42%;
 
     --radius: 0.75rem;
 
-    --navy: 217 71% 20%;
-    --navy-light: 217 50% 30%;
+    --navy: 220 50% 14%;
+    --navy-light: 220 40% 22%;
+    --teal: 168 65% 42%;
+    --teal-light: 168 50% 55%;
     --gold: 40 70% 55%;
 
     --sidebar-background: 0 0% 98%;
@@ -57,7 +59,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
   }
 
