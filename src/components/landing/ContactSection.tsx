@@ -129,30 +129,32 @@ const ContactSection = () => {
         return sit ? sit.label : id;
       });
 
-      await fetch(
+      const formData = new FormData();
+      formData.append("nome", form.nome);
+      formData.append("email", form.email);
+      formData.append("telefone", form.telefone);
+      formData.append("empresa", form.empresa);
+      formData.append("setor", form.setor);
+      formData.append("regime", form.regime);
+      formData.append("faturamento", form.faturamento);
+      formData.append("situacoes", JSON.stringify(situacoesLabels));
+
+      const response = await fetch(
         "https://webhooks-mvp.algomaisacai.com.br/webhook/90229d83-2494-467d-8918-b342b50ed66d",
         {
           method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain" },
-          body: JSON.stringify({
-            nome: form.nome,
-            email: form.email,
-            telefone: form.telefone,
-            empresa: form.empresa,
-            setor: form.setor,
-            regime: form.regime,
-            faturamento: form.faturamento,
-            situacoes: situacoesLabels,
-          }),
+          body: formData,
         }
       );
 
-      toast({ title: "Solicitação enviada!", description: "Entraremos em contato em breve." });
+      if (!response.ok) throw new Error("Erro ao enviar");
+
+      toast({ title: "Solicitação enviada!", description: "Entraremos em contato em breve.", duration: 5000 });
       setForm({ nome: "", email: "", telefone: "", empresa: "", setor: "", regime: "", faturamento: "", situacoes: [] });
       setStep(1);
-    } catch {
-      toast({ title: "Erro ao enviar", description: "Tente novamente em instantes.", variant: "destructive" });
+    } catch (err) {
+      console.error("Webhook error:", err);
+      toast({ title: "Erro ao enviar", description: "Tente novamente em instantes.", variant: "destructive", duration: 5000 });
     } finally {
       setLoading(false);
     }
