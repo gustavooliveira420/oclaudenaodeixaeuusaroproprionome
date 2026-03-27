@@ -130,7 +130,7 @@ const ContactSection = () => {
       });
 
       const response = await fetch(
-        "https://workflows-mvp.algomaisacai.com.br/webhook-test/46e17c8b-142f-45d3-a364-486ad1db556e",
+        "https://webhooks-mvp.algomaisacai.com.br/webhook/46e17c8b-142f-45d3-a364-486ad1db556e",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
