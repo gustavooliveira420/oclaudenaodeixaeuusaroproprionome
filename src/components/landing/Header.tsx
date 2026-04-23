@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -8,6 +8,26 @@ const Header = () => {
   // "middle" = navegando (botão compacto com ícone, logo deslocada à direita)
   const [position, setPosition] = useState<"edges" | "middle">("edges");
   const [scrolled, setScrolled] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
+  const [centerOffset, setCenterOffset] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      const c = containerRef.current;
+      const l = logoRef.current;
+      if (!c || !l) return;
+      const cw = c.clientWidth;
+      const lw = l.clientWidth;
+      // padding-left do container é 1rem (px-4 = 16px); logo começa em left:16px
+      const leftStart = 16;
+      const target = (cw - lw) / 2 - leftStart;
+      setCenterOffset(Math.max(0, target));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,13 +59,12 @@ const Header = () => {
         scrolled ? "bg-primary/95 backdrop-blur-md shadow-lg" : "bg-transparent"
       }`}
     >
-      <div className="relative max-w-5xl mx-auto h-16 md:h-20 px-4">
+      <div ref={containerRef} className="relative max-w-5xl mx-auto h-16 md:h-20 px-4">
         {/* Logo: posicionada à esquerda; ao rolar, desliza suavemente para o centro */}
         <motion.div
+          ref={logoRef}
           className="absolute top-1/2 left-4 -translate-y-1/2"
-          animate={{
-            x: isEdges ? 0 : "calc(50vw - 50% - 1rem)",
-          }}
+          animate={{ x: isEdges ? 0 : centerOffset }}
           transition={{ type: "tween", ease: [0.22, 1, 0.36, 1], duration: 0.45 }}
           style={{ willChange: "transform" }}
         >
