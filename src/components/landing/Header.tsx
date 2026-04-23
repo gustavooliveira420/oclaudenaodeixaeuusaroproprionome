@@ -25,7 +25,7 @@ const Header = () => {
       const cw = c.clientWidth;
       const bw = b.clientWidth;
       const sidePad = 16; // px-4
-      const gap = 12; // espaço mínimo entre logo e botão
+      const gap = 24; // espaço mínimo entre logo e botão
       // Largura máxima da logo para não invadir o botão
       const maxLogo = cw - sidePad * 2 - bw - gap;
       setLogoMaxWidth(Math.max(80, maxLogo));
