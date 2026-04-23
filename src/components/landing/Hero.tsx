@@ -31,7 +31,7 @@ const Hero = () => {
             transition={{ duration: 0.7 }}
           >
             <span className="inline-block text-accent text-sm font-semibold tracking-widest uppercase mb-6">
-              Advocacia Tributária Estratégica
+              Consultoria Tributária Estratégica
             </span>
           </motion.div>
 

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ShoppingCart, Factory, Briefcase } from "lucide-react";
+import { ShoppingCart, Factory, Briefcase, HeartPulse } from "lucide-react";
 
 const segments = [
   {
@@ -35,6 +35,17 @@ const segments = [
     benefit: "Enquadramos sua operação no regime mais vantajoso e seguro.",
     color: "from-accent/15 to-accent/5",
   },
+  {
+    icon: HeartPulse,
+    title: "Saúde",
+    subtitle: "Se você atua na Área de Saúde...",
+    pains: [
+      "Clínicas e serviços de aplicação de vacinas com tributação inadequada",
+      "Insumos e medicamentos com créditos não aproveitados",
+    ],
+    benefit: "Revisamos o enquadramento e identificamos créditos específicos do setor.",
+    color: "from-accent/20 to-accent/5",
+  },
 ];
 
 const SegmentSection = () => (
@@ -60,7 +71,7 @@ const SegmentSection = () => (
         </motion.h2>
       </div>
 
-      <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {segments.map((s, i) => (
           <motion.div
             key={i}
