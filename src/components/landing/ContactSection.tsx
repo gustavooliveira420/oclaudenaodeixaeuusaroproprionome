@@ -18,6 +18,7 @@ const SETORES = [
   "Comércio Varejista (Postos, Farmácias, etc.)",
   "Indústria",
   "Serviços (TI, Saúde, Educação)",
+  "Área de Saúde (Clínicas, serviços de aplicação de vacinas)",
   "Agronegócio",
   "Setor Financeiro",
 ];
@@ -66,6 +67,11 @@ const SITUACOES = [
     id: "holding",
     label:
       "Os sócios possuem patrimônio relevante e pensam em proteção familiar ou sucessão.",
+  },
+  {
+    id: "parecer_concorrente",
+    label:
+      "Já nos foi ofertado ou até elaborado um parecer/tese tributária por outro escritório, mas ainda não fizemos uso da consultoria.",
   },
 ];
 
