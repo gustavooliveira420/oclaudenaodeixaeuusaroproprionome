@@ -10,24 +10,32 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
   const [centerOffset, setCenterOffset] = useState(0);
+  const [logoMaxWidth, setLogoMaxWidth] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     const measure = () => {
       const c = containerRef.current;
       const l = logoRef.current;
-      if (!c || !l) return;
+      const b = buttonRef.current;
+      if (!c || !l || !b) return;
       const cw = c.clientWidth;
-      const lw = l.clientWidth;
-      // padding-left do container é 1rem (px-4 = 16px); logo começa em left:16px
-      const leftStart = 16;
-      const target = (cw - lw) / 2 - leftStart;
+      const bw = b.clientWidth;
+      const sidePad = 16; // px-4
+      const gap = 12; // espaço mínimo entre logo e botão
+      // Largura máxima da logo para não invadir o botão
+      const maxLogo = cw - sidePad * 2 - bw - gap;
+      setLogoMaxWidth(Math.max(80, maxLogo));
+      const lw = Math.min(l.scrollWidth, maxLogo);
+      // Centro do espaço disponível à esquerda do botão
+      const target = (cw - bw - gap - lw) / 2 - sidePad;
       setCenterOffset(Math.max(0, target));
     };
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
-  }, []);
+  }, [isEdges]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,12 +72,12 @@ const Header = () => {
         <motion.div
           ref={logoRef}
           className="absolute top-1/2 left-4"
-          style={{ willChange: "transform", y: "-50%" }}
+          style={{ willChange: "transform", y: "-50%", maxWidth: logoMaxWidth }}
           animate={{ x: isEdges ? 0 : centerOffset, y: "-50%" }}
           transition={{ type: "tween", ease: [0.22, 1, 0.36, 1], duration: 0.45 }}
         >
           <span
-            className={`inline-block font-bold text-lg tracking-tight px-3 py-1 rounded-md transition-colors duration-500 ${
+            className={`inline-block font-bold text-lg tracking-tight px-3 py-1 rounded-md transition-colors duration-500 whitespace-nowrap ${
               onDarkBg
                 ? "text-primary-foreground"
                 : "text-primary border border-primary/40 bg-background/70 backdrop-blur-sm shadow-sm"
@@ -82,7 +90,7 @@ const Header = () => {
         </motion.div>
 
         {/* Botão à direita: morfa entre completo e ícone via animação de largura, sem unmount */}
-        <div className="absolute top-1/2 right-4 -translate-y-1/2">
+        <div ref={buttonRef} className="absolute top-1/2 right-4 -translate-y-1/2">
           <motion.div
             animate={{ scale: isEdges ? 1 : 0.95 }}
             transition={{ duration: 0.3 }}
