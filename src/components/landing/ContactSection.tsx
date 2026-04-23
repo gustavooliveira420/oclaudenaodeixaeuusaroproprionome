@@ -344,14 +344,14 @@ const ContactSection = () => {
                   <Button
                     variant="heroOutline"
                     size="xl"
-                    className="flex-1 group border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                    className="flex-1 group bg-transparent border-primary-foreground/25 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground px-4"
                     type="button"
                     onClick={prev}
                   >
                     <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     Voltar
                   </Button>
-                  <Button variant="hero" size="xl" className="flex-1 group" type="button" onClick={next}>
+                  <Button variant="hero" size="xl" className="flex-1 group px-4 text-base" type="button" onClick={next}>
                     Próximo
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
@@ -397,14 +397,14 @@ const ContactSection = () => {
                   <Button
                     variant="heroOutline"
                     size="xl"
-                    className="flex-1 group border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                    className="flex-1 group bg-transparent border-primary-foreground/25 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground px-4"
                     type="button"
                     onClick={prev}
                   >
                     <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     Voltar
                   </Button>
-                  <Button variant="hero" size="xl" className="flex-1 group" type="submit" disabled={loading}>
+                  <Button variant="hero" size="xl" className="flex-1 group px-4 text-base" type="submit" disabled={loading}>
                     {loading ? "Enviando..." : "Agendar Diagnóstico"}
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
