@@ -18,7 +18,7 @@ const SETORES = [
   "Comércio Varejista (Postos, Farmácias, etc.)",
   "Indústria",
   "Serviços (TI, Saúde, Educação)",
-  "Área de Saúde (Clínicas, serviços de aplicação de vacinas)",
+  "Área de Saúde (Clínica, Hospital ou Laboratório)",
   "Agronegócio",
   "Setor Financeiro",
 ];
@@ -71,7 +71,7 @@ const SITUACOES = [
   {
     id: "parecer_concorrente",
     label:
-      "Já nos foi ofertado ou até elaborado um parecer/tese tributária por outro escritório, mas ainda não fizemos uso da consultoria.",
+      "Já nos foi ofertado/elaborado parecer/tese tributária por outro escritório, mas não fizemos uso da consultoria.",
   },
 ];
 

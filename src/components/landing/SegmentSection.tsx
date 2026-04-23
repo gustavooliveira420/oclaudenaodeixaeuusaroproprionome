@@ -40,7 +40,7 @@ const segments = [
     title: "Saúde",
     subtitle: "Se você atua na Área de Saúde...",
     pains: [
-      "Clínicas e serviços de aplicação de vacinas com tributação inadequada",
+      "Clínicas, hospitais ou laboratórios com tributação inadequada",
       "Insumos e medicamentos com créditos não aproveitados",
     ],
     benefit: "Revisamos o enquadramento e identificamos créditos específicos do setor.",
