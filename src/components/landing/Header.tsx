@@ -63,10 +63,10 @@ const Header = () => {
         {/* Logo: posicionada à esquerda; ao rolar, desliza suavemente para o centro */}
         <motion.div
           ref={logoRef}
-          className="absolute top-1/2 left-4 -translate-y-1/2"
-          animate={{ x: isEdges ? 0 : centerOffset }}
+          className="absolute top-1/2 left-4"
+          style={{ willChange: "transform", y: "-50%" }}
+          animate={{ x: isEdges ? 0 : centerOffset, y: "-50%" }}
           transition={{ type: "tween", ease: [0.22, 1, 0.36, 1], duration: 0.45 }}
-          style={{ willChange: "transform" }}
         >
           <span
             className={`inline-block font-bold text-lg tracking-tight px-3 py-1 rounded-md transition-colors duration-500 ${
