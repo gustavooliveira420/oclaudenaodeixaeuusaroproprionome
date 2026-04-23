@@ -14,6 +14,8 @@ const Header = () => {
   const [centerOffset, setCenterOffset] = useState(0);
   const [logoMaxWidth, setLogoMaxWidth] = useState<number | undefined>(undefined);
 
+  const isEdges = position === "edges";
+
   useEffect(() => {
     const measure = () => {
       const c = containerRef.current;
@@ -58,8 +60,6 @@ const Header = () => {
   // Detecta fundo claro/escuro: nas bordas (hero/footer) o fundo é escuro;
   // no meio com header transparente o fundo é claro.
   const onDarkBg = scrolled || position === "edges";
-
-  const isEdges = position === "edges";
 
   return (
     <header
