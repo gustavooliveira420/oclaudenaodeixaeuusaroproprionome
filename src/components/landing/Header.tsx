@@ -13,6 +13,7 @@ const Header = () => {
   const buttonRef = useRef<HTMLDivElement>(null);
   const [centerOffset, setCenterOffset] = useState(0);
   const [logoMaxWidth, setLogoMaxWidth] = useState<number | undefined>(undefined);
+  const [logoScale, setLogoScale] = useState(1);
 
   const isEdges = position === "edges";
 
@@ -25,12 +26,13 @@ const Header = () => {
       const cw = c.clientWidth;
       const bw = b.clientWidth;
       const sidePad = 16; // px-4
-      const gap = 24; // espaço mínimo entre logo e botão
-      // Largura máxima da logo para não invadir o botão
+      const gap = 36; // espaço mínimo entre logo e botão
       const maxLogo = cw - sidePad * 2 - bw - gap;
       setLogoMaxWidth(Math.max(80, maxLogo));
-      const lw = Math.min(l.scrollWidth, maxLogo);
-      // Centro do espaço disponível à esquerda do botão
+      const rawLogoWidth = l.scrollWidth;
+      const nextScale = Math.min(1, Math.max(0.78, maxLogo / rawLogoWidth));
+      setLogoScale(nextScale);
+      const lw = Math.min(rawLogoWidth * nextScale, maxLogo);
       const target = (cw - bw - gap - lw) / 2 - sidePad;
       setCenterOffset(Math.max(0, target));
     };
@@ -73,7 +75,7 @@ const Header = () => {
           ref={logoRef}
           className="absolute top-1/2 left-4"
           style={{ willChange: "transform", y: "-50%", maxWidth: logoMaxWidth }}
-          animate={{ x: isEdges ? 0 : centerOffset, y: "-50%" }}
+          animate={{ x: isEdges ? 0 : centerOffset, y: "-50%", scale: isEdges ? logoScale : 1 }}
           transition={{ type: "tween", ease: [0.22, 1, 0.36, 1], duration: 0.45 }}
         >
           <span
