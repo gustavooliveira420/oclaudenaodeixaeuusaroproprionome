@@ -15,11 +15,11 @@ const Hero = () => {
         <img
           src={heroImg}
           alt="Consultoria tributária estratégica"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-[60%_center] md:object-center"
           width={1920}
           height={1080}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-primary/40 md:bg-gradient-to-r md:from-primary md:via-primary/85 md:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-primary/10 md:bg-gradient-to-r md:from-primary md:via-primary/85 md:to-transparent" />
       </div>
 
       {/* Content */}
@@ -68,7 +68,7 @@ const Hero = () => {
               variant="hero"
               size="xl"
               className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 group"
-              onClick={() => window.open("https://wa.me/5500000000000", "_blank")}
+              onClick={() => window.open("https://wa.me/5511986539933", "_blank")}
             >
               Falar com especialista
             </Button>
