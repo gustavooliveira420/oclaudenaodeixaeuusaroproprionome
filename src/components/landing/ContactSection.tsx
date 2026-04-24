@@ -135,22 +135,29 @@ const ContactSection = () => {
         return sit ? sit.label : id;
       });
 
-      const payload = new URLSearchParams();
-      payload.append("nome", form.nome);
-      payload.append("email", form.email);
-      payload.append("telefone", form.telefone);
-      payload.append("empresa", form.empresa);
-      payload.append("setor", form.setor);
-      payload.append("regime", form.regime);
-      payload.append("faturamento", form.faturamento);
-      payload.append("situacoes", situacoesLabels.join(" | "));
+      const payload = {
+        nome: form.nome,
+        email: form.email,
+        telefone: form.telefone,
+        empresa: form.empresa,
+        setor: form.setor,
+        regime: form.regime,
+        faturamento: form.faturamento,
+        situacoes: situacoesLabels,
+        situacoes_texto: situacoesLabels.join(" | "),
+        origem: "site-renegocia-tributario",
+        enviado_em: new Date().toISOString(),
+      };
 
+      // text/plain evita o preflight CORS (OPTIONS) sem precisar de no-cors,
+      // e o n8n consegue parsear o body como JSON normalmente.
       await fetch(
         "https://webhooks-mvp.algomaisacai.com.br/webhook/90229d83-2494-467d-8918-b342b50ed66d",
         {
           method: "POST",
-          mode: "no-cors",
-          body: payload,
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
+          body: JSON.stringify(payload),
+          keepalive: true,
         }
       );
 
