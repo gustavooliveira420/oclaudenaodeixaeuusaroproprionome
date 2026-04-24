@@ -149,12 +149,14 @@ const ContactSection = () => {
         enviado_em: new Date().toISOString(),
       };
 
-      // text/plain evita o preflight CORS (OPTIONS) sem precisar de no-cors,
-      // e o n8n consegue parsear o body como JSON normalmente.
+      // O n8n não envia headers CORS, então usamos `no-cors` (não conseguimos
+      // ler a resposta, mas o webhook recebe o body normalmente).
+      // `text/plain` evita o preflight OPTIONS e o n8n parseia o body como JSON.
       await fetch(
         "https://webhooks-mvp.algomaisacai.com.br/webhook/90229d83-2494-467d-8918-b342b50ed66d",
         {
           method: "POST",
+          mode: "no-cors",
           headers: { "Content-Type": "text/plain;charset=UTF-8" },
           body: JSON.stringify(payload),
           keepalive: true,
