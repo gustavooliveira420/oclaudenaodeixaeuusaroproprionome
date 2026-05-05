@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,50 +6,66 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 30% 12%;
+    /* Renegocia Consultoria Prime — paleta oficial
+       #0F2F2A Verde Escuro — confiança e solidez (primário)
+       #16B98A Verde Ação    — crescimento e resultado (CTA)
+       #D4AF37 Dourado       — valor e excelência
+       #F7F6F2 Branco Técnico — clareza e transparência
+       #1A1A1A Preto Apoio   — força e profissionalismo
+    */
 
-    --card: 210 25% 97%;
-    --card-foreground: 220 30% 12%;
+    --background: 48 23% 96%;       /* #F7F6F2 branco técnico */
+    --foreground: 0 0% 10%;          /* #1A1A1A preto apoio */
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 12%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 220 50% 14%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 170 51% 12%;          /* #0F2F2A verde escuro */
+    --primary-foreground: 48 23% 96%; /* branco técnico */
 
-    --secondary: 210 20% 95%;
-    --secondary-foreground: 220 50% 14%;
+    --secondary: 48 23% 92%;
+    --secondary-foreground: 170 51% 12%;
 
-    --muted: 210 15% 94%;
-    --muted-foreground: 215 12% 48%;
+    --muted: 48 15% 90%;
+    --muted-foreground: 0 0% 30%;
 
-    --accent: 168 65% 42%;
+    --accent: 159 79% 41%;           /* #16B98A verde ação */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 48 23% 96%;
 
-    --border: 214 18% 90%;
-    --input: 214 18% 90%;
-    --ring: 168 65% 42%;
+    --border: 170 20% 85%;
+    --input: 170 20% 85%;
+    --ring: 159 79% 41%;             /* anel = verde ação */
 
     --radius: 0.75rem;
 
-    --navy: 220 50% 14%;
-    --navy-light: 220 40% 22%;
-    --teal: 168 65% 42%;
-    --teal-light: 168 50% 55%;
-    --gold: 40 70% 55%;
+    /* Tokens semânticos da identidade Prime */
+    --prime-dark: 170 51% 12%;       /* verde escuro */
+    --prime-green: 159 79% 41%;      /* verde ação */
+    --prime-gold: 46 65% 52%;        /* #D4AF37 dourado */
+    --prime-light: 48 23% 96%;       /* branco técnico */
+    --prime-black: 0 0% 10%;         /* preto apoio */
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Aliases legados — apontam para a nova paleta para não quebrar componentes */
+    --navy: 170 51% 12%;
+    --navy-light: 170 35% 22%;
+    --teal: 159 79% 41%;
+    --teal-light: 159 60% 55%;
+    --gold: 46 65% 52%;
+
+    --sidebar-background: 48 23% 98%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 170 51% 12%;
+    --sidebar-primary-foreground: 48 23% 96%;
+    --sidebar-accent: 48 15% 92%;
+    --sidebar-accent-foreground: 170 51% 12%;
+    --sidebar-border: 170 20% 85%;
+    --sidebar-ring: 159 79% 41%;
   }
 }
 
@@ -60,16 +76,36 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-feature-settings: "tnum" on, "lnum" on;
   }
 
   html {
     scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    letter-spacing: -0.01em;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Decorações da identidade Prime */
+  .prime-grid {
+    background-image:
+      linear-gradient(hsl(var(--prime-green) / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--prime-green) / 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .prime-glow {
+    box-shadow:
+      0 0 0 1px hsl(var(--prime-gold) / 0.25),
+      0 8px 30px -8px hsl(var(--prime-green) / 0.5);
   }
 }
