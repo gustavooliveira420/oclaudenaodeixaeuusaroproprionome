@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowRight, ArrowLeft } from "lucide-react";
-import patternBg from "@/assets/pattern-bg.jpg";
 
 const SETORES = [
   "Comércio Varejista (Postos, Farmácias, etc.)",
@@ -176,25 +175,25 @@ const ContactSection = () => {
   };
 
   const inputClass =
-    "bg-primary-foreground/5 border-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/40 h-13 rounded-xl focus:border-accent";
+    "bg-white/5 border-white/15 text-white placeholder:text-white/40 h-12 rounded-xl focus:border-prime-green focus-visible:ring-prime-green";
 
   const selectTriggerClass =
-    "bg-primary-foreground/5 border-primary-foreground/15 text-primary-foreground h-13 rounded-xl focus:border-accent [&>span]:text-primary-foreground/60 data-[state=open]:border-accent";
+    "bg-white/5 border-white/15 text-white h-12 rounded-xl focus:border-prime-green focus-visible:ring-prime-green [&>span]:text-white/60 data-[state=open]:border-prime-green";
 
   const stepIndicator = (num: number, label: string) => (
     <div className="flex flex-col items-center gap-1.5">
       <div
-        className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-black transition-colors ${
           step >= num
-            ? "bg-accent text-accent-foreground"
-            : "bg-primary-foreground/10 text-primary-foreground/40"
+            ? "bg-prime-green text-prime-dark shadow-[0_0_0_4px_hsl(var(--prime-green)/0.2)]"
+            : "bg-white/10 text-white/40"
         }`}
       >
         {num}
       </div>
       <span
-        className={`text-[11px] font-medium transition-colors ${
-          step >= num ? "text-accent" : "text-primary-foreground/30"
+        className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${
+          step >= num ? "text-prime-green" : "text-white/30"
         }`}
       >
         {label}
@@ -203,38 +202,46 @@ const ContactSection = () => {
   );
 
   return (
-    <section id="contato" className="relative py-24 px-4 bg-primary overflow-hidden">
-      <div className="absolute inset-0 opacity-10">
-        <img src={patternBg} alt="" className="w-full h-full object-cover" loading="lazy" />
-      </div>
+    <section
+      id="contato"
+      className="relative py-24 px-4 bg-prime-dark overflow-hidden"
+    >
+      <div className="absolute inset-0 prime-grid opacity-30" />
+      <div className="absolute inset-0 bg-gradient-to-b from-prime-dark via-prime-dark/95 to-prime-dark" />
+      {/* Linha dourada decorativa */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-prime-gold/40 to-transparent" />
 
       <div className="relative z-10 max-w-lg mx-auto text-center">
-        <motion.span
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-accent text-sm font-semibold tracking-widest uppercase"
+          className="flex items-center justify-center gap-3 mb-4"
         >
-          Comece agora
-        </motion.span>
+          <span className="h-px w-10 bg-prime-gold" />
+          <span className="text-prime-gold text-xs font-semibold tracking-[0.2em] uppercase">
+            Comece agora
+          </span>
+          <span className="h-px w-10 bg-prime-gold" />
+        </motion.div>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="mt-4 text-2xl md:text-4xl font-bold text-primary-foreground leading-tight"
+          className="text-2xl md:text-4xl font-black uppercase tracking-tight text-white leading-tight"
         >
           Descubra se sua empresa tem{" "}
-          <span className="text-accent">dinheiro parado</span>
+          <span className="text-prime-green">dinheiro parado</span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.15 }}
-          className="mt-3 text-primary-foreground/50 text-sm"
+          className="mt-3 text-white/60 text-sm"
         >
-          Sem custo inicial · Diagnóstico gratuito
+          Sem custo inicial · Diagnóstico gratuito · Sem compromisso
         </motion.p>
 
         {/* Step indicators */}
@@ -246,9 +253,9 @@ const ContactSection = () => {
           className="mt-8 flex items-center justify-center gap-6"
         >
           {stepIndicator(1, "Contato")}
-          <div className={`h-px w-8 transition-colors ${step >= 2 ? "bg-accent" : "bg-primary-foreground/15"}`} />
+          <div className={`h-px w-8 transition-colors ${step >= 2 ? "bg-prime-green" : "bg-white/15"}`} />
           {stepIndicator(2, "Negócio")}
-          <div className={`h-px w-8 transition-colors ${step >= 3 ? "bg-accent" : "bg-primary-foreground/15"}`} />
+          <div className={`h-px w-8 transition-colors ${step >= 3 ? "bg-prime-green" : "bg-white/15"}`} />
           {stepIndicator(3, "Oportunidades")}
         </motion.div>
 
@@ -263,7 +270,7 @@ const ContactSection = () => {
                 transition={{ duration: 0.25 }}
                 className="space-y-4"
               >
-                <p className="text-primary-foreground/70 text-sm font-semibold mb-2 text-left">
+                <p className="text-prime-gold text-xs font-bold tracking-[0.2em] uppercase mb-2 text-left">
                   Passo 1: Dados de Contato
                 </p>
                 <Input
@@ -296,7 +303,7 @@ const ContactSection = () => {
                   className={inputClass}
                   maxLength={100}
                 />
-                <Button variant="hero" size="xl" className="w-full group mt-2" type="button" onClick={next}>
+                <Button variant="prime" size="xl" className="w-full group mt-2" type="button" onClick={next}>
                   Próximo
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -312,7 +319,7 @@ const ContactSection = () => {
                 transition={{ duration: 0.25 }}
                 className="space-y-4"
               >
-                <p className="text-primary-foreground/70 text-sm font-semibold mb-2 text-left">
+                <p className="text-prime-gold text-xs font-bold tracking-[0.2em] uppercase mb-2 text-left">
                   Passo 2: Perfil do Negócio
                 </p>
 
@@ -351,16 +358,16 @@ const ContactSection = () => {
 
                 <div className="flex gap-3 mt-2">
                   <Button
-                    variant="heroOutline"
+                    variant="primeOutline"
                     size="xl"
-                    className="flex-1 group bg-transparent border-primary-foreground/25 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground px-4"
+                    className="flex-1 group px-4"
                     type="button"
                     onClick={prev}
                   >
                     <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     Voltar
                   </Button>
-                  <Button variant="hero" size="xl" className="flex-1 group px-4 text-base" type="button" onClick={next}>
+                  <Button variant="prime" size="xl" className="flex-1 group px-4 text-base" type="button" onClick={next}>
                     Próximo
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
@@ -377,10 +384,10 @@ const ContactSection = () => {
                 transition={{ duration: 0.25 }}
                 className="space-y-4"
               >
-                <p className="text-primary-foreground/70 text-sm font-semibold mb-2 text-left">
+                <p className="text-prime-gold text-xs font-bold tracking-[0.2em] uppercase mb-2 text-left">
                   Passo 3: Identificação de Oportunidades
                 </p>
-                <p className="text-primary-foreground/40 text-xs text-left mb-3">
+                <p className="text-white/45 text-xs text-left mb-3">
                   Selecione todas as situações que se aplicam à sua empresa:
                 </p>
 
@@ -388,14 +395,14 @@ const ContactSection = () => {
                   {SITUACOES.map((sit) => (
                     <label
                       key={sit.id}
-                      className="flex items-start gap-3 p-3 rounded-xl bg-primary-foreground/5 border border-primary-foreground/10 hover:border-accent/40 transition-colors cursor-pointer"
+                      className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-prime-green/50 transition-colors cursor-pointer"
                     >
                       <Checkbox
                         checked={form.situacoes.includes(sit.id)}
                         onCheckedChange={() => toggleSituacao(sit.id)}
-                        className="mt-0.5 border-primary-foreground/30 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
+                        className="mt-0.5 border-white/30 data-[state=checked]:bg-prime-green data-[state=checked]:border-prime-green"
                       />
-                      <span className="text-primary-foreground/80 text-sm leading-snug">
+                      <span className="text-white/80 text-sm leading-snug">
                         {sit.label}
                       </span>
                     </label>
@@ -404,17 +411,17 @@ const ContactSection = () => {
 
                 <div className="flex gap-3 mt-2">
                   <Button
-                    variant="heroOutline"
+                    variant="primeOutline"
                     size="xl"
-                    className="flex-1 group bg-transparent border-primary-foreground/25 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground px-4"
+                    className="flex-1 group px-4"
                     type="button"
                     onClick={prev}
                   >
                     <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     Voltar
                   </Button>
-                  <Button variant="hero" size="xl" className="flex-1 group px-4 text-base" type="submit" disabled={loading}>
-                    {loading ? "Enviando..." : "Agendar Diagnóstico"}
+                  <Button variant="prime" size="xl" className="flex-1 group px-4 text-base" type="submit" disabled={loading}>
+                    {loading ? "Enviando..." : "Agendar diagnóstico"}
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </div>

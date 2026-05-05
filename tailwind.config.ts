@@ -56,6 +56,13 @@ export default {
           light: "hsl(var(--teal-light))",
         },
         gold: "hsl(var(--gold))",
+        prime: {
+          dark: "hsl(var(--prime-dark))",
+          green: "hsl(var(--prime-green))",
+          gold: "hsl(var(--prime-gold))",
+          light: "hsl(var(--prime-light))",
+          black: "hsl(var(--prime-black))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -71,6 +78,10 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ["Montserrat", "system-ui", "sans-serif"],
+        display: ["Montserrat", "system-ui", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

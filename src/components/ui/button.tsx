@@ -17,6 +17,9 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         hero: "bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg hover:shadow-xl hover:-translate-y-0.5",
         heroOutline: "border-2 border-primary/30 text-primary bg-background hover:bg-primary hover:text-primary-foreground",
+        prime: "bg-prime-green text-white hover:bg-prime-green/90 shadow-[0_8px_30px_-8px_hsl(var(--prime-green)/0.5)] hover:shadow-[0_12px_40px_-8px_hsl(var(--prime-green)/0.6)] hover:-translate-y-0.5 font-semibold",
+        primeOutline: "border-2 border-prime-gold/70 text-prime-gold bg-transparent hover:bg-prime-gold hover:text-prime-dark font-semibold",
+        primeGold: "bg-prime-gold text-prime-dark hover:bg-prime-gold/90 shadow-lg hover:shadow-xl hover:-translate-y-0.5 font-semibold",
       },
       size: {
         default: "h-10 px-4 py-2",
