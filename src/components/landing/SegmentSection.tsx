@@ -49,25 +49,30 @@ const segments = [
 ];
 
 const SegmentSection = () => (
-  <section className="py-24 px-6">
-    <div className="max-w-5xl mx-auto">
+  <section className="py-24 px-4 md:px-6 bg-white">
+    <div className="max-w-7xl mx-auto">
       <div className="text-center max-w-2xl mx-auto">
-        <motion.span
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-accent text-sm font-semibold tracking-widest uppercase"
+          className="flex items-center justify-center gap-3 mb-4"
         >
-          Segmentos
-        </motion.span>
+          <span className="h-px w-10 bg-prime-green" />
+          <span className="text-prime-green text-xs font-semibold tracking-[0.2em] uppercase">
+            Segmentos
+          </span>
+          <span className="h-px w-10 bg-prime-green" />
+        </motion.div>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="mt-4 text-2xl md:text-4xl font-bold text-foreground"
+          className="text-2xl md:text-4xl font-black uppercase tracking-tight text-prime-dark"
         >
-          Para quem é esse serviço?
+          Para quem é{" "}
+          <span className="text-prime-green">esse serviço?</span>
         </motion.h2>
       </div>
 
@@ -78,28 +83,34 @@ const SegmentSection = () => (
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: i * 0.15, duration: 0.5 }}
-            className="group relative bg-background rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-all duration-500"
+            transition={{ delay: i * 0.12, duration: 0.5 }}
+            className="group relative bg-prime-light rounded-2xl border border-prime-dark/10 overflow-hidden hover:shadow-xl hover:border-prime-gold/40 transition-all duration-300"
           >
-            <div className={`absolute inset-0 bg-gradient-to-b ${s.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-            <div className="relative p-7">
+            <div className="p-7">
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                  <s.icon className="w-5 h-5 text-accent" />
+                <div className="w-11 h-11 rounded-xl bg-prime-dark flex items-center justify-center group-hover:bg-prime-green transition-colors">
+                  <s.icon className="w-5 h-5 text-prime-gold group-hover:text-white transition-colors" />
                 </div>
-                <span className="text-xs font-semibold tracking-wider uppercase text-muted-foreground">{s.title}</span>
+                <span className="text-xs font-bold tracking-[0.18em] uppercase text-prime-green">
+                  {s.title}
+                </span>
               </div>
-              <h3 className="font-bold text-foreground text-lg">{s.subtitle}</h3>
-              <ul className="mt-4 space-y-3">
+              <h3 className="font-bold text-prime-dark text-lg uppercase tracking-tight">
+                {s.subtitle}
+              </h3>
+              <ul className="mt-4 space-y-2.5">
                 {s.pains.map((p, j) => (
-                  <li key={j} className="text-sm text-muted-foreground flex items-start gap-2.5">
-                    <span className="w-1.5 h-1.5 bg-accent rounded-full mt-2 shrink-0" />
+                  <li
+                    key={j}
+                    className="text-sm text-prime-black/70 flex items-start gap-2.5"
+                  >
+                    <span className="w-1.5 h-1.5 bg-prime-gold rounded-full mt-2 shrink-0" />
                     {p}
                   </li>
                 ))}
               </ul>
-              <div className="mt-5 pt-5 border-t border-border">
-                <p className="text-sm text-accent font-semibold">{s.benefit}</p>
+              <div className="mt-5 pt-5 border-t border-prime-dark/10">
+                <p className="text-sm text-prime-green font-semibold">{s.benefit}</p>
               </div>
             </div>
           </motion.div>

@@ -9,6 +9,7 @@ import ProcessSection from "@/components/landing/ProcessSection";
 import PricingSection from "@/components/landing/PricingSection";
 import AuthoritySection from "@/components/landing/AuthoritySection";
 import FaqSection from "@/components/landing/FaqSection";
+import ClosingCtaSection from "@/components/landing/ClosingCtaSection";
 import ContactSection from "@/components/landing/ContactSection";
 import WhatsAppButton from "@/components/landing/WhatsAppButton";
 import Footer from "@/components/landing/Footer";
@@ -19,14 +20,15 @@ const Index = () => (
     <main>
       <Hero />
       <StatsSection />
-      <PainSection />
       <SolutionSection />
-      <BenefitsSection />
-      <SegmentSection />
+      <PainSection />
       <ProcessSection />
-      <PricingSection />
       <AuthoritySection />
+      <SegmentSection />
+      <BenefitsSection />
+      <PricingSection />
       <FaqSection />
+      <ClosingCtaSection />
       <ContactSection />
     </main>
     <Footer />
