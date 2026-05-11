@@ -168,7 +168,7 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 
 ### POST 4 — Gancho ICMS na base do PIS/COFINS (carrossel)
 
-**Tipo:** Carrossel · 5 slides
+**Tipo:** Carrossel · 6 slides
 **Função:** Maior gancho de curiosidade. Conta a história da "tese do século" de forma simples — primeiro post que tem chance de viralizar entre contadores e empresários.
 
 **Slide 1 (capa):**
@@ -189,7 +189,12 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 >
 > Tudo que foi pago a mais nos últimos 5 anos pode voltar. Com correção.
 
-**Slide 5 (CTA):**
+**Slide 5:**
+> Quanto dá?
+>
+> Empresas de médio porte recuperam de R$ 50k a R$ 200k. Indústrias e distribuidoras, muito mais.
+
+**Slide 6 (CTA):**
 > A Renegocia faz esse cálculo no diagnóstico consultivo de 45 minutos.
 >
 > Link na bio.
@@ -294,7 +299,7 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 
 ### POST 8 — INSS sobre folha (carrossel)
 
-**Tipo:** Carrossel · 5 slides
+**Tipo:** Carrossel · 6 slides
 **Função:** Tese mais "cotidiana" — toda empresa com folha entende rapidamente.
 
 **Slide 1 (capa):**
@@ -319,7 +324,12 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 > – PLR
 > – Auxílio-creche, auxílio-doença, vale-transporte em pecúnia
 
-**Slide 5 (CTA):**
+**Slide 5:**
+> Quanto pode voltar?
+>
+> Em empresas com folha acima de R$ 100k/mês, o ticket fica entre R$ 50k e R$ 300k recuperáveis em 5 anos.
+
+**Slide 6 (CTA):**
 > Sua folha tem essas verbas? Faz sentido olhar.
 >
 > Link na bio.
@@ -341,7 +351,7 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 **Texto na imagem:**
 > Diagnóstico consultivo em 45 minutos.
 > Se não houver oportunidade, dizemos.
-> Se houver, você paga uma parte na contratação e o restante quando seu crédito é reconhecido.
+> Se houver, você paga de acordo com o valor restituido a ser reeconhecido.
 
 **Logo/assinatura embaixo.**
 
@@ -392,7 +402,7 @@ Padrão de 8 a 12 por post, misturando nichos:
 - [ ] As legendas estão em português direto, sem jargão sem explicação, sem emoji em excesso?
 - [ ] O CTA "link na bio" só aparece nos posts onde faz sentido (não nos institucionais que vão fixados)?
 - [ ] **Nenhum post diz "gratuito" ou "de graça"** — está sempre como "diagnóstico consultivo"?
-- [ ] **Nenhum post promete valor de recuperação** — slides que prometiam "R$ Xk a R$ Yk" foram removidos (posts 4, 6, 8)?
+- [ ] Os posts 4 e 8 mantêm faixa de valores ilustrativa ("R$ Xk a R$ Yk recuperáveis") como gancho comercial — está claro que é faixa indicativa, não promessa? O post 6 segue sem citar valores.
 - [ ] **Nenhuma frase tipo "paga quando recebe"** que sugira que o cliente recebe dinheiro em conta — todas explicam o modelo (parte na contratação + restante quando o crédito tributário é reconhecido)?
 
 ---
