@@ -82,13 +82,13 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 **Legenda do post:**
 > Estreia oficial.
 >
-> A Renegocia é uma consultoria tributária que atua exclusivamente em êxito: só recebe quando sua empresa recebe.
+> A Renegocia é uma consultoria tributária que atua com risco compartilhado: você paga uma parte na contratação (custas iniciais da consultoria) e o restante dos honorários só vence quando seu crédito tributário é reconhecido.
 >
-> A maioria das empresas brasileiras paga tributo que o STF e o STJ já decidiram que não é devido. A gente identifica, calcula e recupera — sem você precisar tirar dinheiro do caixa pra começar.
+> A maioria das empresas brasileiras paga tributo que o STF e o STJ já decidiram que não é devido. A gente identifica, calcula e recupera.
 >
 > Aqui você vai entender, em linguagem simples, quanto sua empresa pode estar perdendo todo mês sem saber.
 >
-> Diagnóstico gratuito no link da bio.
+> Diagnóstico consultivo no link da bio.
 
 **Briefing visual:** Fundo limpo, frase em destaque. Tipografia da identidade visual da Renegocia. Tom institucional, sério, não publicitário.
 
@@ -103,7 +103,7 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 > Como a Renegocia recupera imposto pago a mais
 
 **Slide 2:**
-> 1. Diagnóstico gratuito
+> 1. Diagnóstico consultivo
 > 30 a 45 minutos. A gente olha os tributos da sua empresa e identifica onde tem oportunidade.
 
 **Slide 3:**
@@ -115,13 +115,13 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 > A gente cuida de tudo — administrativo ou judicial. Você só recebe atualizações.
 
 **Slide 5:**
-> 4. Você só paga quando recebe
-> Honorário só sobre o valor efetivamente recuperado. Se nada vier, você não paga nada.
+> 4. Risco compartilhado
+> Você paga uma parte na contratação. O restante dos honorários só vence quando seu crédito tributário é reconhecido.
 
 **Legenda:**
 > Quase toda empresa em Lucro Presumido ou Lucro Real tem imposto pra recuperar. A questão é se vale a pena ir atrás.
 >
-> Nosso diagnóstico responde isso de graça, em até 45 minutos. Se houver oportunidade, fazemos uma proposta. Se não houver, dizemos com a mesma clareza.
+> Nosso diagnóstico consultivo responde isso em até 45 minutos. Se houver oportunidade, fazemos uma proposta. Se não houver, dizemos com a mesma clareza.
 >
 > Diagnóstico no link da bio.
 
@@ -139,7 +139,7 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 
 **Slide 2 — PIS/COFINS:**
 > PIS e COFINS pagos a mais
-> Em vendas, insumos, ICMS na base. Ticket típico: R$ 15k a R$ 200k.
+> Em vendas, insumos, ICMS na base.
 
 **Slide 3 — IRPJ/CSLL:**
 > IRPJ e CSLL sobre incentivos
@@ -155,12 +155,12 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 
 **Slide 6 (CTA):**
 > Quer saber qual se aplica à sua empresa?
-> Diagnóstico gratuito no link da bio.
+> Diagnóstico consultivo no link da bio.
 
 **Legenda:**
 > A Renegocia opera em quatro frentes principais. Cada uma tem fundamentação no STF ou STJ — não é interpretação criativa, é jurisprudência consolidada.
 >
-> Que tipo de empresa pode recuperar? Em geral: Lucro Presumido ou Lucro Real, faturamento acima de R$ 1MM/ano, atividade tributada (não Simples). Se for o seu caso, vale o diagnóstico.
+> Que tipo de empresa pode recuperar? Em geral: Lucro Presumido ou Lucro Real, faturamento acima de R$ 1MM/ano, em caso de Simples Nacional é passível de avaliação para troca do regime ou atividade tributada. Se for o seu caso, vale o diagnóstico.
 
 **Briefing visual:** Cada slide com um "símbolo" claro do imposto (PIS, COFINS, IRPJ etc). Layout de catálogo, organizado.
 
@@ -168,7 +168,7 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 
 ### POST 4 — Gancho ICMS na base do PIS/COFINS (carrossel)
 
-**Tipo:** Carrossel · 6 slides
+**Tipo:** Carrossel · 5 slides
 **Função:** Maior gancho de curiosidade. Conta a história da "tese do século" de forma simples — primeiro post que tem chance de viralizar entre contadores e empresários.
 
 **Slide 1 (capa):**
@@ -189,13 +189,8 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 >
 > Tudo que foi pago a mais nos últimos 5 anos pode voltar. Com correção.
 
-**Slide 5:**
-> Quanto dá?
->
-> Empresas de médio porte recuperam de R$ 50k a R$ 200k. Indústrias e distribuidoras, muito mais.
-
-**Slide 6 (CTA):**
-> A Renegocia faz esse cálculo de graça em 45 minutos.
+**Slide 5 (CTA):**
+> A Renegocia faz esse cálculo no diagnóstico consultivo de 45 minutos.
 >
 > Link na bio.
 
@@ -254,10 +249,7 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 >
 > Imposto pago a mais pode ser recuperado.
 
-**Slide 5:**
-> Ticket médio nesses casos: R$ 20k a R$ 150k. Em alguns setores, muito mais.
-
-**Slide 6 (CTA):**
+**Slide 5 (CTA):**
 > Tem incentivo estadual? Vale o diagnóstico.
 >
 > Link na bio.
@@ -282,10 +274,10 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 > 1 diagnóstico de 45 minutos.
 
 **Linha abaixo:**
-> Auto posto · Sorocaba/SP · 2026
+> Auto posto · SP · 2026
 
 **Legenda:**
-> Caso real, anonimizado.
+> Caso real, exemplo de recuperação média.
 >
 > Um auto posto em operação há mais de 10 anos passou pelo diagnóstico Renegocia. Em 45 minutos, identificamos duas frentes:
 >
@@ -294,7 +286,7 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 >
 > Total recuperável: R$ 142 mil.
 >
-> O diagnóstico é gratuito. Se não tiver oportunidade, dizemos. Se tiver, fazemos a proposta — e você só paga quando recebe.
+> O diagnóstico é consultivo. Se não tiver oportunidade, dizemos. Se tiver, fazemos a proposta — conforme contratação e cálculo de custas iniciais, iniciamos os procedimentos de solicitação e restituição, e você paga de acordo com o valor restituído.
 
 **Briefing visual:** Card visual estilo "extrato" ou "auditoria" — formal, número grande, sem floreio. Talvez uma cor única de destaque pro "R$ 142 mil".
 
@@ -327,12 +319,7 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 > – PLR
 > – Auxílio-creche, auxílio-doença, vale-transporte em pecúnia
 
-**Slide 5:**
-> Quanto pode voltar?
->
-> Em empresas com folha acima de R$ 100k/mês, o ticket fica entre R$ 50k e R$ 300k recuperáveis em 5 anos.
-
-**Slide 6 (CTA):**
+**Slide 5 (CTA):**
 > Sua folha tem essas verbas? Faz sentido olhar.
 >
 > Link na bio.
@@ -352,16 +339,16 @@ Publicar primeiro os fixados (1 → 2), depois 3 → 9 ao longo do dia (ou agend
 **Função:** Fecha a grade com a proposta de valor da Renegocia em 3 linhas.
 
 **Texto na imagem:**
-> Diagnóstico gratuito em 45 minutos.
+> Diagnóstico consultivo em 45 minutos.
 > Se não houver oportunidade, dizemos.
-> Se houver, você só paga quando recebe.
+> Se houver, você paga uma parte na contratação e o restante quando seu crédito é reconhecido.
 
 **Logo/assinatura embaixo.**
 
 **Legenda:**
 > Esse é o compromisso da Renegocia.
 >
-> A gente não vive de retainer. Vive de identificar e executar recuperações reais. Quanto melhor a gente é, mais a gente recebe — e você só paga sobre o que entrou no caixa.
+> Atuamos como consultoria com risco compartilhado: você paga uma parte na contratação (custas iniciais da consultoria) e o restante dos honorários só vence quando seu crédito tributário é reconhecido pela Receita.
 >
 > Pra começar: link na bio.
 
@@ -399,11 +386,14 @@ Padrão de 8 a 12 por post, misturando nichos:
 
 ## Verificação (como saber se ficou bom)
 
-- [ ] Quem entra no perfil entende em 10 segundos o que a Renegocia faz (posts 1, 2, 3 fixados no topo)?
+- [ ] Quem entra no perfil entende em 10 segundos o que a Renegocia faz (posts 1 e 2 fixados no topo)?
 - [ ] Cada post de tese (4, 6, 8) tem gancho de curiosidade no slide 1 — não começa com termo técnico?
 - [ ] O número R$ 142k do post 7 está fiel ao parecer Cedro (35k + 107k)?
 - [ ] As legendas estão em português direto, sem jargão sem explicação, sem emoji em excesso?
 - [ ] O CTA "link na bio" só aparece nos posts onde faz sentido (não nos institucionais que vão fixados)?
+- [ ] **Nenhum post diz "gratuito" ou "de graça"** — está sempre como "diagnóstico consultivo"?
+- [ ] **Nenhum post promete valor de recuperação** — slides que prometiam "R$ Xk a R$ Yk" foram removidos (posts 4, 6, 8)?
+- [ ] **Nenhuma frase tipo "paga quando recebe"** que sugira que o cliente recebe dinheiro em conta — todas explicam o modelo (parte na contratação + restante quando o crédito tributário é reconhecido)?
 
 ---
 
