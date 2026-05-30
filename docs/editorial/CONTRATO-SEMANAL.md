@@ -6,15 +6,16 @@ Este documento é o contrato entre Gabriel/Gustavo (clientes) e qualquer Claude 
 
 ---
 
-## 1. Cadência de publicação
+## 1. Cadência de publicação e revisão
 
-- **6 posts/semana**: seg, ter, qua, qui, sex + 1 bônus aos sábados
-- **Domingo:** sem publicação (descanso editorial)
+- **6 posts/semana publicados**: seg, ter, qua, qui, sex + 1 bônus aos sábados
+- **Domingo:** sem publicação (descanso editorial) — usado pra **entregar bundle de 12 posts** ao Gabriel revisar
 - **Horários** (BRT):
   - 09:00 — turno manhã (alta atenção decisor PME)
   - 13:00 — segundo post no mesmo dia em semanas de campanha (não default)
   - 18:00 — turno fim-de-expediente (re-engajamento)
 - Default = 1 post/dia útil às 09:00 BRT, exceto semanas de lançamento de tese (3/dia).
+- **Ciclo de revisão:** Claude entrega 12 → Gabriel escolhe 6 até segunda 18:00 BRT → Claude atualiza `instagram_posts.json` e cron do workflow até terça 12:00 BRT.
 
 ## 2. Pilares de conteúdo (rotação semanal fixa)
 
@@ -46,14 +47,16 @@ Tributário é ecossistema de jurisprudência **pública** — todo case útil j
 
 **Para cada case publicado**: registrar a fonte original em `docs/editorial/cases-bibliografia.md` (link + data de consulta). Auditoria a qualquer momento.
 
-## 4. Entregável semanal obrigatório (toda segunda 09:00 BRT)
+## 4. Entregável semanal obrigatório (todo DOMINGO 09:00 BRT)
 
-Toda segunda, o Claude que gerencia este projeto **DEVE** entregar ao Gabriel:
+> **Mudança em 2026-05-30:** Gabriel ajustou de segunda para DOMINGO porque quer ter o dia útil pra revisar e cortar. Cadência é **12 posts (2 semanas)** em cada entrega — ele escolhe a metade pra próxima semana. Resto vai pro estoque ou é descartado.
 
-1. **Plano da semana** em `docs/editorial/planos-semanais/{ANO}-W{NN}.md` contendo:
-   - 6 posts (seg-sáb) com: pilar, tema, hook, caption rascunho, briefing visual (slides)
-   - Fonte de cada case (link)
+Todo domingo 09:00 BRT, o Claude que gerencia este projeto **DEVE** entregar:
+
+1. **Bundle de 12 posts** em `docs/editorial/planos-semanais/{ANO}-W{NN}-W{NN+1}-bundle.md` contendo:
+   - 12 posts (~2 semanas) com: pilar, ângulo, hook, caption rascunho COMPLETA, briefing visual (slides), **fonte oficial obrigatória** (link STF/STJ/CARF/Receita/Conjur/JOTA/Valor)
    - Hashtag fixa de auditoria `#rngc-{YYYYWNN}-{dia}` (oculta no fim da caption)
+   - Marcação clara de quais 6 são "recomendação top" (numerados 1-6 com nota) e quais 6 são alternativos (7-12)
 2. **Status da semana anterior:**
    - Quais posts saíram, horário real vs planejado
    - Métricas básicas (alcance, engajamento) via Graph API
@@ -61,9 +64,12 @@ Toda segunda, o Claude que gerencia este projeto **DEVE** entregar ao Gabriel:
 3. **Sinalização de risco:**
    - Token Meta expira em < 30 dias? → alerta vermelho
    - Algum post falhou? → causa raiz já identificada
-   - Mudança de algoritmo/política? → ajuste proposto
+   - Mudança de algoritmo/política Meta? → ajuste proposto
+   - Mudança legislativa relevante (LC/Lei/MP/IN) → impacto nos posts já programados
 
-Sem esse entregável na segunda, o gerenciamento está em falta.
+**Padrão de apuração (não-negociável):** cada post precisa de fonte oficial direta — não vale citar "STF decidiu" sem link/processo/data. Aceitas: portal.stf.jus.br, scon.stj.jus.br, carf.economia.gov.br, gov.br/receitafederal, in.gov.br, pgfn.gov.br, conjur.com.br, jota.info, valor.globo.com, migalhas.com.br. Toda fonte vai pra `cases-bibliografia.md` no mesmo commit.
+
+Sem esse entregável no domingo, o gerenciamento está em falta.
 
 ## 5. Salvaguardas anti-erro (implementadas no workflow)
 
