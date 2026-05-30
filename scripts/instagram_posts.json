@@ -1,0 +1,116 @@
+[
+  {
+    "number": 1,
+    "title": "Manifesto",
+    "folder": "post-1-manifesto",
+    "images": ["slide-1-manifesto.png"],
+    "pin": true,
+    "day": 1,
+    "caption": "Estreia oficial.\n\nA Renegocia é uma consultoria tributária que atua com risco compartilhado: você paga uma parte na contratação (custas iniciais da consultoria) e o restante dos honorários só vence quando seu crédito tributário é reconhecido.\n\nA maioria das empresas brasileiras paga tributo que o STF e o STJ já decidiram que não é devido. A gente identifica, calcula e recupera.\n\nAqui você vai entender, em linguagem simples, quanto sua empresa pode estar perdendo todo mês sem saber.\n\nDiagnóstico consultivo no link da bio.\n\n#consultoriatributaria #recuperacaodecreditos #planejamentotributario #direitotributario #empresario #pme #cargatributaria #sorocaba #empresariosorocaba"
+  },
+  {
+    "number": 2,
+    "title": "Como funciona",
+    "folder": "post-2-como-funciona",
+    "images": [
+      "slide-1-capa.png",
+      "slide-2-diagnostico.png",
+      "slide-3-proposta.png",
+      "slide-4-execucao.png",
+      "slide-5-risco-compartilhado.png"
+    ],
+    "pin": true,
+    "day": 1,
+    "caption": "Quase toda empresa em Lucro Presumido ou Lucro Real tem imposto pra recuperar. A questão é se vale a pena ir atrás.\n\nNosso diagnóstico consultivo responde isso em até 45 minutos. Se houver oportunidade, fazemos uma proposta. Se não houver, dizemos com a mesma clareza.\n\nDiagnóstico no link da bio.\n\n#consultoriatributaria #recuperacaodecreditos #planejamentotributario #lucrorealelp #contabilidade #empresario #pme #sorocaba #regiaosorocaba"
+  },
+  {
+    "number": 3,
+    "title": "O que recuperamos",
+    "folder": "post-3-o-que-recuperamos",
+    "images": [
+      "slide-1-capa.png",
+      "slide-2-pis-cofins.png",
+      "slide-3-irpj-csll.png",
+      "slide-4-inss.png",
+      "slide-5-icms.png",
+      "slide-6-cta.png"
+    ],
+    "pin": false,
+    "day": 1,
+    "caption": "A Renegocia opera em quatro frentes principais. Cada uma tem fundamentação no STF ou STJ — não é interpretação criativa, é jurisprudência consolidada.\n\nQue tipo de empresa pode recuperar? Em geral: Lucro Presumido ou Lucro Real, faturamento acima de R$ 1MM/ano. No Simples Nacional é passível de avaliação para troca do regime ou atividade tributada. Se for o seu caso, vale o diagnóstico.\n\n#consultoriatributaria #recuperacaodecreditos #planejamentotributario #direitotributario #piscofins #irpj #inss #icms #cargatributaria #empresario"
+  },
+  {
+    "number": 4,
+    "title": "ICMS na base do PIS/COFINS",
+    "folder": "post-4-icms-base-pis-cofins",
+    "images": [
+      "slide-1-hook.png",
+      "slide-2-problema.png",
+      "slide-3-stf-decidiu.png",
+      "slide-4-significado.png",
+      "slide-5-quanto-da.png",
+      "slide-6-cta.png"
+    ],
+    "pin": false,
+    "day": 2,
+    "caption": "Essa é a tese mais famosa do direito tributário brasileiro — e mesmo assim, milhares de empresas ainda não recuperaram o que pagaram a mais.\n\nSe sua empresa apura PIS/COFINS no Lucro Presumido ou Real e existe desde antes de março de 2017, o cálculo é praticamente automático.\n\n#consultoriatributaria #recuperacaodecreditos #stf #tema69 #piscofins #icms #direitotributario #lucrorealelp #empresario #economiafiscal #contabilidade"
+  },
+  {
+    "number": 5,
+    "title": "Pergunta provocativa",
+    "folder": "post-5-pergunta",
+    "images": ["slide-1-pergunta.png"],
+    "pin": false,
+    "day": 2,
+    "caption": "Existem hoje mais de 15 teses tributárias com decisão favorável no STF ou STJ — todas representando valores que empresas pagaram e podem recuperar.\n\nA Renegocia mantém atualizado o portfólio completo. Você não precisa entender de direito tributário pra saber se sua empresa tem direito. A gente faz isso.\n\n#consultoriatributaria #recuperacaodecreditos #planejamentotributario #cargatributaria #empresario #pme #lucrorealelp #economiafiscal #direitotributario #sorocaba"
+  },
+  {
+    "number": 6,
+    "title": "Incentivos ICMS no IRPJ/CSLL",
+    "folder": "post-6-incentivos-icms",
+    "images": [
+      "slide-1-hook.png",
+      "slide-2-quem-tem.png",
+      "slide-3-fisco-cobrava.png",
+      "slide-4-stj-pacificou.png",
+      "slide-5-cta.png"
+    ],
+    "pin": false,
+    "day": 2,
+    "caption": "Essa tese é particularmente relevante para indústrias, agronegócio, distribuidoras e empresas que receberam benefício fiscal de qualquer estado nos últimos 5 anos.\n\nSe sua empresa tem decreto ou ato concessório estadual, há grande chance de oportunidade.\n\n#consultoriatributaria #recuperacaodecreditos #stj #tema1182 #irpj #csll #industria #agronegocio #incentivofiscal #planejamentotributario"
+  },
+  {
+    "number": 7,
+    "title": "Case R$ 142k",
+    "folder": "post-7-case-142k",
+    "images": ["slide-1-case.png"],
+    "pin": false,
+    "day": 3,
+    "caption": "Caso real, exemplo de recuperação média.\n\nUm auto posto em operação há mais de 10 anos passou pelo diagnóstico Renegocia. Em 45 minutos, identificamos duas frentes:\n\n· R$ 35 mil em PIS/COFINS pagos a mais nos últimos 5 anos\n· R$ 107 mil em INSS sobre verbas indenizatórias\n\nTotal recuperável: R$ 142 mil.\n\nO diagnóstico é consultivo. Se não tiver oportunidade, dizemos. Se tiver, fazemos a proposta — conforme contratação e cálculo de custas iniciais, iniciamos os procedimentos de solicitação e restituição, e os honorários restantes vencem quando o crédito é reconhecido.\n\n#consultoriatributaria #recuperacaodecreditos #postodecombustiveis #piscofins #inss #cargatributaria #empresario #lucrorealelp #sorocaba #cases"
+  },
+  {
+    "number": 8,
+    "title": "INSS sobre folha",
+    "folder": "post-8-inss-folha",
+    "images": [
+      "slide-1-hook.png",
+      "slide-2-regra.png",
+      "slide-3-sistema.png",
+      "slide-4-checklist.png",
+      "slide-5-quanto.png",
+      "slide-6-cta.png"
+    ],
+    "pin": false,
+    "day": 3,
+    "caption": "Essa tese é talvez a mais subestimada. Muita empresa acha que \"é pouco\" — mas o cálculo costuma surpreender quando se soma 5 anos.\n\nSe você tem folha relevante, vale fazer o diagnóstico.\n\n#consultoriatributaria #recuperacaodecreditos #inss #folhadepagamento #rh #stj #empresario #pme #contabilidade #economiafiscal"
+  },
+  {
+    "number": 9,
+    "title": "CTA institucional",
+    "folder": "post-9-cta-institucional",
+    "images": ["slide-1-cta.png"],
+    "pin": false,
+    "day": 3,
+    "caption": "Esse é o compromisso da Renegocia.\n\nAtuamos como consultoria com risco compartilhado: você paga uma parte na contratação (custas iniciais da consultoria) e o restante dos honorários só vence quando seu crédito tributário é reconhecido pela Receita.\n\nPra começar: link na bio.\n\n#consultoriatributaria #recuperacaodecreditos #planejamentotributario #direitotributario #empresario #cargatributaria #sorocaba #empresariosorocaba #regiaosorocaba"
+  }
+]
