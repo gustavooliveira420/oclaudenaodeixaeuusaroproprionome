@@ -87,6 +87,20 @@ jobs:
               f.write(f"post_number={num}\n")
           EOF
 
+      - name: Pre-flight (token, imagens, caption, JSON)
+        env:
+          IG_ACCESS_TOKEN:   ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID:        ${{ secrets.IG_USER_ID }}
+          IG_IMAGE_BASE_URL: ${{ secrets.IG_IMAGE_BASE_URL }}
+          POST_NUM:          ${{ steps.decide.outputs.post_number }}
+        run: |
+          set +e
+          python3 scripts/preflight.py "$POST_NUM"
+          rc=$?
+          if [ $rc -eq 0 ]; then echo "preflight: OK"; exit 0; fi
+          if [ $rc -eq 2 ]; then echo "preflight: AVISOS (nao bloqueia)"; exit 0; fi
+          echo "preflight: FATAL"; exit $rc
+
       - name: Salvaguarda — idempotência (não republicar se já está no IG)
         id: idempotency
         env:
@@ -133,6 +147,7 @@ jobs:
           EOF
 
       - name: Publicar post
+        id: publish
         if: steps.idempotency.outputs.skip != 'true'
         env:
           IG_ACCESS_TOKEN:   ${{ secrets.IG_ACCESS_TOKEN }}
@@ -148,6 +163,39 @@ jobs:
             echo "=== Publicando post $POST_NUM ==="
             python3 scripts/post_to_instagram.py "$POST_NUM" --publish
           fi
+
+      - name: Pos-verify (compara caption real x esperada)
+        if: steps.publish.outcome == 'success' && github.event.inputs.dry_run != 'true' && steps.idempotency.outputs.skip != 'true'
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID:      ${{ secrets.IG_USER_ID }}
+          POST_NUM:        ${{ steps.decide.outputs.post_number }}
+        run: |
+          python3 << 'EOF'
+          import os, json, urllib.parse, urllib.request, time, sys
+          from pathlib import Path
+          token = os.environ['IG_ACCESS_TOKEN']
+          user = os.environ['IG_USER_ID']
+          num = int(os.environ['POST_NUM'])
+          esperado = next(p for p in json.loads(Path('scripts/instagram_posts.json').read_text()) if p['number'] == num)
+          esperado_prefix = esperado['caption'][:80].strip()
+          time.sleep(15)  # Meta leva alguns segundos pra refletir
+          url = f"https://graph.facebook.com/v21.0/{user}/media?fields=id,caption,timestamp&limit=3&access_token={urllib.parse.quote(token)}"
+          with urllib.request.urlopen(url, timeout=30) as r:
+              data = json.loads(r.read()).get('data', [])
+          if not data:
+              print("AVISO: API nao retornou nenhum media - nao da pra verificar")
+              sys.exit(0)
+          ultimo = data[0]
+          cap = (ultimo.get('caption') or '')[:80].strip()
+          if cap == esperado_prefix:
+              print(f"OK pos-verify - caption confere (id={ultimo['id']})")
+          else:
+              print(f"AVISO pos-verify - caption divergiu:")
+              print(f"  esperado: {esperado_prefix!r}")
+              print(f"  publicado: {cap!r}")
+              # nao falha o workflow - so registra
+          EOF
 
       - name: Notificar falha por issue
         if: failure()

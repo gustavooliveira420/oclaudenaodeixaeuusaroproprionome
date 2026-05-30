@@ -1,0 +1,110 @@
+name: Instagram Catch-up (auto-corrige posts atrasados)
+
+# Roda toda noite 02:00 UTC (23:00 BRT, depois do ultimo slot diario de
+# publicacao). Detecta posts esperados hoje que nao sairam e publica como
+# recuperacao. Limita-se a 2 catch-ups por janela de 7 dias.
+#
+# Tambem pode ser disparado manualmente em modo dry-run pra checar gaps
+# antes de re-tentar nada.
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # diario 02:00 UTC = 23:00 BRT
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry-run (so detecta, nao publica)'
+        required: false
+        default: 'true'
+
+concurrency:
+  group: ig-post   # mesmo lock do workflow principal
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  catchup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Catch-up
+        id: catchup
+        env:
+          IG_ACCESS_TOKEN:   ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID:        ${{ secrets.IG_USER_ID }}
+          IG_IMAGE_BASE_URL: ${{ secrets.IG_IMAGE_BASE_URL }}
+          DRY_RUN:           ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            python3 scripts/catchup.py --dry-run | tee /tmp/catchup.json
+          else
+            python3 scripts/catchup.py | tee /tmp/catchup.json
+          fi
+          # extrai resumo pra próximo step
+          python3 -c "
+          import json
+          d = json.load(open('/tmp/catchup.json'))
+          executed = d.get('executed', [])
+          errors = d.get('errors', [])
+          with open('${{ github.output }}'.replace('${{ github.output }}', '/tmp/out.txt'), 'w') as f:
+              pass
+          " || true
+          echo "executed_count=$(python3 -c "import json; print(len(json.load(open('/tmp/catchup.json')).get('executed', [])))")" >> $GITHUB_OUTPUT
+          echo "error_count=$(python3 -c "import json; print(len(json.load(open('/tmp/catchup.json')).get('errors', [])))")" >> $GITHUB_OUTPUT
+
+      - name: Commit log de catch-up (se houver execucao real)
+        if: github.event.inputs.dry_run != 'true' && steps.catchup.outputs.executed_count != '0'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/editorial/audit-log/catchup-history.json
+          git diff --cached --quiet || git commit -m "chore(audit): registro de catch-up automatico em $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push || echo "push falhou - alguem commitou na main no meio - investigar manual"
+
+      - name: Issue informativa de catch-up
+        if: steps.catchup.outputs.executed_count != '0' || steps.catchup.outputs.error_count != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('/tmp/catchup.json', 'utf8'));
+            const executed = data.executed || [];
+            const errors = data.errors || [];
+            const skipped = data.skipped || [];
+            const isDry = '${{ github.event.inputs.dry_run }}' === 'true';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const title = isDry
+              ? `[CATCH-UP dry-run] ${new Date().toISOString().slice(0,10)} - ${executed.length} pendencia(s)`
+              : `[CATCH-UP] ${new Date().toISOString().slice(0,10)} - ${executed.length} corrigido(s), ${errors.length} falha(s)`;
+            const body = [
+              `Catch-up automatico ${isDry ? 'em modo dry-run' : 'executado'}.`,
+              ``,
+              `**Run:** ${runUrl}`,
+              ``,
+              `## Executados (${executed.length})`,
+              executed.length ? '```json\n' + JSON.stringify(executed, null, 2) + '\n```' : '_nenhum_',
+              ``,
+              `## Erros (${errors.length})`,
+              errors.length ? '```json\n' + JSON.stringify(errors, null, 2) + '\n```' : '_nenhum_',
+              ``,
+              `## Skipped (${skipped.length})`,
+              skipped.length ? '```json\n' + JSON.stringify(skipped, null, 2) + '\n```' : '_nenhum_',
+            ].join('\n');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: errors.length ? ['ig-catchup', 'urgente'] : ['ig-catchup'],
+            });

@@ -19,9 +19,11 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from typing import Optional
 
 GRAPH = "https://graph.facebook.com/v21.0"
 ROOT = Path(__file__).resolve().parent
@@ -47,19 +49,73 @@ def require(name: str) -> str:
     return value
 
 
-def api_call(method: str, path: str, params: dict) -> dict:
+# Codigos de erro do Meta tratados como transitorios (vale retry):
+#  - HTTP 5xx (backend Meta indisponivel)
+#  - HTTP 429 (rate-limit)
+#  - subcodigos 4, 17, 32, 613 (rate / temp lock)
+#  - timeout
+TRANSIENT_ERROR_CODES = {4, 17, 32, 613}
+TRANSIENT_HTTP_CODES = {429, 500, 502, 503, 504}
+
+
+class TransientAPIError(Exception):
+    pass
+
+
+class FatalAPIError(Exception):
+    pass
+
+
+def api_call(method: str, path: str, params: dict, retries: int = 3) -> dict:
+    """Chama Graph API com retry exponencial em erros transitorios.
+
+    Backoff: 30s -> 90s -> 180s (max).
+    Erros fatais (token, payload, etc.) levantam FatalAPIError imediatamente.
+    """
     url = f"{GRAPH}/{path}"
     body = urllib.parse.urlencode({**params, "access_token": TOKEN}).encode()
     if method == "GET":
-        url = f"{url}?{body.decode()}"
-        req = urllib.request.Request(url, method="GET")
+        url_full = f"{url}?{body.decode()}"
+        req = urllib.request.Request(url_full, method="GET")
     else:
         req = urllib.request.Request(url, data=body, method=method)
-    try:
-        with urllib.request.urlopen(req) as resp:
-            return json.loads(resp.read())
-    except urllib.error.HTTPError as e:
-        sys.exit(f"ERRO API ({e.code}) em {method} {path}: {e.read().decode()}")
+
+    attempt = 0
+    last_exc: Optional[Exception] = None
+    while attempt <= retries:
+        attempt += 1
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return json.loads(resp.read())
+        except urllib.error.HTTPError as e:
+            payload = e.read().decode()
+            try:
+                err = json.loads(payload).get("error", {})
+                code = err.get("code")
+                sub = err.get("error_subcode")
+            except json.JSONDecodeError:
+                code, sub = None, None
+            transient = (
+                e.code in TRANSIENT_HTTP_CODES
+                or code in TRANSIENT_ERROR_CODES
+                or sub in TRANSIENT_ERROR_CODES
+            )
+            if transient and attempt <= retries:
+                wait = 30 * (3 ** (attempt - 1))
+                print(f"  [retry {attempt}/{retries}] erro transitorio HTTP {e.code} code={code} sub={sub} - aguardando {wait}s...")
+                time.sleep(wait)
+                last_exc = TransientAPIError(f"HTTP {e.code} code={code}: {payload[:200]}")
+                continue
+            raise FatalAPIError(f"API {method} {path} - HTTP {e.code}: {payload}") from e
+        except (urllib.error.URLError, TimeoutError) as e:
+            if attempt <= retries:
+                wait = 30 * (3 ** (attempt - 1))
+                print(f"  [retry {attempt}/{retries}] erro de rede ({e}) - aguardando {wait}s...")
+                time.sleep(wait)
+                last_exc = TransientAPIError(str(e))
+                continue
+            raise FatalAPIError(f"Rede falhou apos {retries} tentativas: {e}") from e
+    raise FatalAPIError(f"Esgotou retries: {last_exc}")
 
 
 def wait_until_ready(container_id: str, timeout: int = 180) -> None:
@@ -70,9 +126,9 @@ def wait_until_ready(container_id: str, timeout: int = 180) -> None:
         if status == "FINISHED":
             return
         if status == "ERROR":
-            sys.exit(f"ERRO: container {container_id} falhou no processamento")
+            raise FatalAPIError(f"container {container_id} falhou no processamento (status=ERROR)")
         time.sleep(3)
-    sys.exit(f"ERRO: container {container_id} não ficou pronto em {timeout}s")
+    raise FatalAPIError(f"container {container_id} nao ficou pronto em {timeout}s")
 
 
 def publish(post: dict, dry_run: bool) -> None:
