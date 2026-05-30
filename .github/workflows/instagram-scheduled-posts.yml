@@ -1,7 +1,7 @@
 name: Instagram Scheduled Posts
 
 # Cronograma de estreia @renegocia.tributario — 6 posts restantes (3, 4, 5, 7, 8, 9)
-# Posts 1, 2 e 6 já foram publicados em 22-23/05/2026 via routines manuais.
+# Posts 1, 2 e 6 já foram publicados em 22-23/05/2026.
 # Horários abaixo em UTC. BRT = UTC - 3.
 #
 # Mapeamento data/hora UTC → número do post:
@@ -11,6 +11,11 @@ name: Instagram Scheduled Posts
 #   02/06 12:00 UTC (09:00 BRT) → post 7  (Case R$142k)
 #   02/06 16:00 UTC (13:00 BRT) → post 8  (INSS folha)
 #   02/06 21:00 UTC (18:00 BRT) → post 9  (CTA Diagnóstico)
+#
+# Salvaguardas (ver docs/editorial/CONTRATO-SEMANAL.md seção 5):
+#  - Concurrency lock: nunca rodam duas execuções juntas
+#  - Idempotência: aborta se caption do post já apareceu nas últimas 6h
+#  - Notificação: abre issue automática [FALHA-IG] se qualquer step falhar
 
 on:
   schedule:
@@ -30,6 +35,14 @@ on:
         description: 'Dry-run (não publica, só simula)'
         required: false
         default: 'false'
+
+concurrency:
+  group: ig-post
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
 
 jobs:
   post:
@@ -74,13 +87,59 @@ jobs:
               f.write(f"post_number={num}\n")
           EOF
 
-      - name: Publicar post
+      - name: Salvaguarda — idempotência (não republicar se já está no IG)
+        id: idempotency
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           IG_USER_ID:      ${{ secrets.IG_USER_ID }}
+          POST_NUM:        ${{ steps.decide.outputs.post_number }}
+        run: |
+          python3 << 'EOF'
+          import os, json, urllib.parse, urllib.request, sys
+          from pathlib import Path
+
+          token = os.environ['IG_ACCESS_TOKEN']
+          ig_user = os.environ['IG_USER_ID']
+          num = int(os.environ['POST_NUM'])
+
+          posts = json.loads(Path('scripts/instagram_posts.json').read_text())
+          target = next((p for p in posts if p['number'] == num), None)
+          if not target:
+              sys.exit(f"Post {num} não existe no JSON")
+
+          # primeiros 60 chars da caption como assinatura
+          signature = target['caption'][:60].strip()
+          print(f"Assinatura do post {num}: {signature!r}")
+
+          url = (
+              f"https://graph.facebook.com/v21.0/{ig_user}/media"
+              f"?fields=id,caption,timestamp&limit=15&access_token={urllib.parse.quote(token)}"
+          )
+          with urllib.request.urlopen(url) as resp:
+              data = json.loads(resp.read())
+
+          for p in data.get('data', []):
+              cap = (p.get('caption') or '')[:60].strip()
+              if cap == signature:
+                  print(f"⚠ Post {num} já existe no IG: id={p['id']} ({p['timestamp']})")
+                  print("Abortando publicação (idempotência).")
+                  with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                      f.write("skip=true\n")
+                  sys.exit(0)
+
+          print(f"✓ Nenhum post recente com a mesma assinatura. Liberado para publicar.")
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write("skip=false\n")
+          EOF
+
+      - name: Publicar post
+        if: steps.idempotency.outputs.skip != 'true'
+        env:
+          IG_ACCESS_TOKEN:   ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID:        ${{ secrets.IG_USER_ID }}
           IG_IMAGE_BASE_URL: ${{ secrets.IG_IMAGE_BASE_URL }}
-          POST_NUM: ${{ steps.decide.outputs.post_number }}
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          POST_NUM:          ${{ steps.decide.outputs.post_number }}
+          DRY_RUN:           ${{ github.event.inputs.dry_run }}
         run: |
           if [ "$DRY_RUN" = "true" ]; then
             echo "=== DRY-RUN do post $POST_NUM ==="
@@ -89,3 +148,34 @@ jobs:
             echo "=== Publicando post $POST_NUM ==="
             python3 scripts/post_to_instagram.py "$POST_NUM" --publish
           fi
+
+      - name: Notificar falha por issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const postNum = '${{ steps.decide.outputs.post_number }}' || 'desconhecido';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const now = new Date().toISOString();
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[FALHA-IG] ${now} post ${postNum}`,
+              body: [
+                `O workflow de publicação automática do Instagram falhou.`,
+                ``,
+                `- **Post:** ${postNum}`,
+                `- **Quando:** ${now}`,
+                `- **Run:** ${runUrl}`,
+                ``,
+                `Abrir o Run pra ver o log do step que falhou. Causas comuns:`,
+                ``,
+                `- Token Meta expirado → renovar (ver scripts/.env.example)`,
+                `- Imagem fora do ar (raw.githubusercontent.com) → checar repo público das imagens`,
+                `- Limite Graph API atingido → aguardar 1h e disparar via workflow_dispatch`,
+                `- Caption acima de 2200 chars → revisar instagram_posts.json`,
+                ``,
+                `Quando consertar, disparar manualmente via: Actions → Instagram Scheduled Posts → Run workflow → post_number=${postNum}`,
+              ].join('\n'),
+              labels: ['ig-falha', 'urgente'],
+            });
