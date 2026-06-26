@@ -1,0 +1,197 @@
+[
+  {
+    "number": 1,
+    "title": "Manifesto",
+    "folder": "post-1-manifesto",
+    "images": ["slide-1-manifesto.png"],
+    "pin": true,
+    "day": 1,
+    "caption": "Estreia oficial.\n\nA Renegocia é uma consultoria tributária que atua com risco compartilhado: você paga uma parte na contratação (custas iniciais da consultoria) e o restante dos honorários só vence quando seu crédito tributário é reconhecido.\n\nA maioria das empresas brasileiras paga tributo que o STF e o STJ já decidiram que não é devido. A gente identifica, calcula e recupera.\n\nAqui você vai entender, em linguagem simples, quanto sua empresa pode estar perdendo todo mês sem saber.\n\nDiagnóstico consultivo no link da bio.\n\n#consultoriatributaria #recuperacaodecreditos #planejamentotributario #direitotributario #empresario #pme #cargatributaria #sorocaba #empresariosorocaba"
+  },
+  {
+    "number": 2,
+    "title": "Como funciona",
+    "folder": "post-2-como-funciona",
+    "images": [
+      "slide-1-capa.png",
+      "slide-2-diagnostico.png",
+      "slide-3-proposta.png",
+      "slide-4-execucao.png",
+      "slide-5-risco-compartilhado.png"
+    ],
+    "pin": true,
+    "day": 1,
+    "caption": "Quase toda empresa em Lucro Presumido ou Lucro Real tem imposto pra recuperar. A questão é se vale a pena ir atrás.\n\nNosso diagnóstico consultivo responde isso em até 45 minutos. Se houver oportunidade, fazemos uma proposta. Se não houver, dizemos com a mesma clareza.\n\nDiagnóstico no link da bio.\n\n#consultoriatributaria #recuperacaodecreditos #planejamentotributario #lucrorealelp #contabilidade #empresario #pme #sorocaba #regiaosorocaba"
+  },
+  {
+    "number": 3,
+    "title": "O que recuperamos",
+    "folder": "post-3-o-que-recuperamos",
+    "images": [
+      "slide-1-capa.png",
+      "slide-2-pis-cofins.png",
+      "slide-3-irpj-csll.png",
+      "slide-4-inss.png",
+      "slide-5-icms.png",
+      "slide-6-cta.png"
+    ],
+    "pin": false,
+    "day": 1,
+    "caption": "A Renegocia opera em quatro frentes principais. Cada uma tem fundamentação no STF ou STJ — não é interpretação criativa, é jurisprudência consolidada.\n\nQue tipo de empresa pode recuperar? Em geral: Lucro Presumido ou Lucro Real, faturamento acima de R$ 1MM/ano. No Simples Nacional é passível de avaliação para troca do regime ou atividade tributada. Se for o seu caso, vale o diagnóstico.\n\n#consultoriatributaria #recuperacaodecreditos #planejamentotributario #direitotributario #piscofins #irpj #inss #icms #cargatributaria #empresario"
+  },
+  {
+    "number": 4,
+    "title": "ICMS na base do PIS/COFINS",
+    "folder": "post-4-icms-base-pis-cofins",
+    "images": [
+      "slide-1-hook.png",
+      "slide-2-problema.png",
+      "slide-3-stf-decidiu.png",
+      "slide-4-significado.png",
+      "slide-5-quanto-da.png",
+      "slide-6-cta.png"
+    ],
+    "pin": false,
+    "day": 2,
+    "caption": "Essa é a tese mais famosa do direito tributário brasileiro — e mesmo assim, milhares de empresas ainda não recuperaram o que pagaram a mais.\n\nSe sua empresa apura PIS/COFINS no Lucro Presumido ou Real e existe desde antes de março de 2017, o cálculo é praticamente automático.\n\n#consultoriatributaria #recuperacaodecreditos #stf #tema69 #piscofins #icms #direitotributario #lucrorealelp #empresario #economiafiscal #contabilidade"
+  },
+  {
+    "number": 5,
+    "title": "Pergunta provocativa",
+    "folder": "post-5-pergunta",
+    "images": ["slide-1-pergunta.png"],
+    "pin": false,
+    "day": 2,
+    "caption": "Existem hoje mais de 15 teses tributárias com decisão favorável no STF ou STJ — todas representando valores que empresas pagaram e podem recuperar.\n\nA Renegocia mantém atualizado o portfólio completo. Você não precisa entender de direito tributário pra saber se sua empresa tem direito. A gente faz isso.\n\n#consultoriatributaria #recuperacaodecreditos #planejamentotributario #cargatributaria #empresario #pme #lucrorealelp #economiafiscal #direitotributario #sorocaba"
+  },
+  {
+    "number": 6,
+    "title": "Incentivos ICMS no IRPJ/CSLL",
+    "folder": "post-6-incentivos-icms",
+    "images": [
+      "slide-1-hook.png",
+      "slide-2-quem-tem.png",
+      "slide-3-fisco-cobrava.png",
+      "slide-4-stj-pacificou.png",
+      "slide-5-cta.png"
+    ],
+    "pin": false,
+    "day": 2,
+    "caption": "Essa tese é particularmente relevante para indústrias, agronegócio, distribuidoras e empresas que receberam benefício fiscal de qualquer estado nos últimos 5 anos.\n\nSe sua empresa tem decreto ou ato concessório estadual, há grande chance de oportunidade.\n\n#consultoriatributaria #recuperacaodecreditos #stj #tema1182 #irpj #csll #industria #agronegocio #incentivofiscal #planejamentotributario"
+  },
+  {
+    "number": 7,
+    "title": "Case R$ 142k",
+    "folder": "post-7-case-142k",
+    "images": ["slide-1-case.png"],
+    "pin": false,
+    "day": 3,
+    "caption": "Caso real, exemplo de recuperação média.\n\nUm auto posto em operação há mais de 10 anos passou pelo diagnóstico Renegocia. Em 45 minutos, identificamos duas frentes:\n\n· R$ 35 mil em PIS/COFINS pagos a mais nos últimos 5 anos\n· R$ 107 mil em INSS sobre verbas indenizatórias\n\nTotal recuperável: R$ 142 mil.\n\nO diagnóstico é consultivo. Se não tiver oportunidade, dizemos. Se tiver, fazemos a proposta — conforme contratação e cálculo de custas iniciais, iniciamos os procedimentos de solicitação e restituição, e os honorários restantes vencem quando o crédito é reconhecido.\n\n#consultoriatributaria #recuperacaodecreditos #postodecombustiveis #piscofins #inss #cargatributaria #empresario #lucrorealelp #sorocaba #cases"
+  },
+  {
+    "number": 8,
+    "title": "INSS sobre folha",
+    "folder": "post-8-inss-folha",
+    "images": [
+      "slide-1-hook.png",
+      "slide-2-regra.png",
+      "slide-3-sistema.png",
+      "slide-4-checklist.png",
+      "slide-5-quanto.png",
+      "slide-6-cta.png"
+    ],
+    "pin": false,
+    "day": 3,
+    "caption": "Essa tese é talvez a mais subestimada. Muita empresa acha que \"é pouco\" — mas o cálculo costuma surpreender quando se soma 5 anos.\n\nSe você tem folha relevante, vale fazer o diagnóstico.\n\n#consultoriatributaria #recuperacaodecreditos #inss #folhadepagamento #rh #stj #empresario #pme #contabilidade #economiafiscal"
+  },
+  {
+    "number": 9,
+    "title": "CTA institucional",
+    "folder": "post-9-cta-institucional",
+    "images": ["slide-1-cta.png"],
+    "pin": false,
+    "day": 3,
+    "caption": "Esse é o compromisso da Renegocia.\n\nAtuamos como consultoria com risco compartilhado: você paga uma parte na contratação (custas iniciais da consultoria) e o restante dos honorários só vence quando seu crédito tributário é reconhecido pela Receita.\n\nPra começar: link na bio.\n\n#consultoriatributaria #recuperacaodecreditos #planejamentotributario #direitotributario #empresario #cargatributaria #sorocaba #empresariosorocaba #regiaosorocaba"
+  },
+  {
+    "number": 10,
+    "title": "Bastidores risco compartilhado",
+    "folder": "post-10-risco-compartilhado",
+    "images": [
+      "slide-1-capa.png",
+      "slide-2-tres-etapas.png",
+      "slide-3-tres-razoes.png",
+      "slide-4-cta.png"
+    ],
+    "pin": false,
+    "day": 4,
+    "caption": "Modelo comercial transparente — risco compartilhado é o pilar.\n\nComo funciona:\n1. CONTRATAÇÃO: cliente paga custas iniciais da consultoria (valor fixo baixo, definido em proposta caso a caso). Isso cobre o trabalho de análise, cálculo, montagem do pleito.\n\n2. EXECUÇÃO: a Renegocia toca a recuperação — habilitação administrativa ou ação judicial, depending on a tese. Cliente não tem responsabilidade técnica nem outros custos.\n\n3. ÊXITO: quando o crédito é reconhecido (decisão judicial transitada ou habilitação confirmada), os honorários de êxito vencem. Percentual varia entre 15% e 35% do valor recuperado, conforme complexidade.\n\nPor que esse modelo? Alinhamento de incentivos, filtro de qualidade automático e cliente sem risco financeiro relevante.\n\nDiagnóstico no link da bio.\n\n#consultoriatributaria #riscocompartilhado #honorarios #recuperacaodecreditos #empresario #pme #transparencia #rngc-2026W26-1"
+  },
+  {
+    "number": 11,
+    "title": "Provocação vale-refeição",
+    "folder": "post-11-vale-refeicao",
+    "images": [
+      "slide-1-capa.png",
+      "slide-2-o-que-entra.png",
+      "slide-3-cta.png"
+    ],
+    "pin": false,
+    "day": 4,
+    "caption": "A pergunta é literal. Se a resposta for sim, leia até o fim.\n\nEm abril/2026, o TRF-2 (Tribunal Regional Federal da 2ª Região) reconheceu que o vale-refeição obrigatório por convenção coletiva (CCT) é INSUMO pra fins de crédito de PIS/COFINS — Mandado de Segurança 5004629-49.2026.4.02.5101.\n\nMesmo entendimento já aplicado a:\n· Vale-alimentação\n· Plano de saúde\n· Seguro de vida em grupo\n· Uniformes exigidos por CCT ou lei\n\nFundamento jurídico: STJ Tema 779 (REsp 1.221.170) — definição de \"insumo\" pelo critério de ESSENCIALIDADE ou RELEVÂNCIA pra atividade. Se a lei ou a CCT obriga, é insumo.\n\nPra empresa em regime não-cumulativo (Lucro Real), a janela é de 5 anos retroativos. O ponto crítico é a documentação: CCT vigente, recibos, contratos.\n\nSua empresa tem folha grande de funcionários? Esse pode ser um R$ que está parado há tempos.\n\nDiagnóstico no link da bio.\n\n#consultoriatributaria #piscofins #insumos #stj #tema779 #valerefeicao #folhapagamento #recuperacaodecreditos #empresario #lucroreal #trf2 #rngc-2026W26-2"
+  },
+  {
+    "number": 12,
+    "title": "Tema 69 STF - mecanica",
+    "folder": "post-12-tema69-mecanica",
+    "images": ["slide-1-capa.png","slide-2-logica.png","slide-3-timeline.png","slide-4-checklist.png","slide-5-cta.png"],
+    "pin": false,
+    "day": 5,
+    "caption": "A tese mais valiosa do direito tributário brasileiro tem 9 anos — e ainda gera recuperação pra quase toda empresa em Lucro Presumido ou Real.\n\nA lógica do STF no Tema 69 (RE 574.706): PIS e COFINS incidem sobre RECEITA. ICMS é tributo que a empresa só transita pro estado — não é receita dela. Portanto, não compõe a base.\n\nModulação importante: a regra vale pra fatos geradores a partir de 15/03/2017 — exceto se sua empresa já tinha ação protocolada antes dessa data, caso em que retroage até 5 anos.\n\nO que isso significa hoje, em 2026:\n· Sua empresa apura PIS/COFINS no LP ou LR?\n· Tem receita tributada por ICMS (vende mercadoria)?\n· Existe desde antes de março de 2017?\n\nSe sim pros três: o cálculo é praticamente automático. Diagnóstico no link da bio.\n\n#consultoriatributaria #tema69 #recuperacaodecreditos #piscofins #icms #stf #lucropresumido #lucroreal #empresario #pme #sorocaba #rngc-2026W27-1"
+  },
+  {
+    "number": 13,
+    "title": "Case distribuidora R$ 380k",
+    "folder": "post-13-distribuidora-380k",
+    "images": ["slide-1-capa.png","slide-2-tres-frentes.png","slide-3-motivos.png","slide-4-cta.png"],
+    "pin": false,
+    "day": 5,
+    "caption": "Caso real, anonimizado.\n\nDistribuidora em Sorocaba, regime Lucro Real, faturamento próximo de R$ 40MM/ano. Existia desde 2008.\n\nDiagnóstico Renegocia identificou três frentes:\n· R$ 215k em PIS/COFINS pagos a mais nos últimos 5 anos (Tema 69 STF — ICMS na base)\n· R$ 95k em INSS sobre verbas indenizatórias da folha (aviso prévio, terço de férias, auxílio-creche)\n· R$ 70k de PIS/COFINS sobre insumos antes não creditados (Tema 779 STJ — essencialidade)\n\nTotal: R$ 380k.\n\nNão é caso atípico. Distribuição é setor altamente recuperável por três motivos:\n1. Margem operacional apertada — qualquer R$ recuperado vira fôlego real\n2. Operação intensa em ICMS-ST (substituição tributária) — gera várias frentes\n3. Folha grande com verbas múltiplas — INSS é quase sempre recuperável\n\nSua empresa é distribuidora? Diagnóstico no link da bio.\n\n#consultoriatributaria #distribuidora #recuperacaodecreditos #piscofins #inss #lucroreal #cases #sorocaba #empresariosorocaba #tema69 #rngc-2026W27-2"
+  },
+  {
+    "number": 14,
+    "title": "ICMS destacado vs recolhido",
+    "folder": "post-14-icms-destacado-recolhido",
+    "images": ["slide-1-capa.png","slide-2-conceito.png","slide-3-numerico.png","slide-4-stf.png","slide-5-cta.png"],
+    "pin": false,
+    "day": 5,
+    "caption": "Esse é o detalhe que o STF cravou em 2021 e que ainda confunde contador, empresário e até auditor da Receita.\n\nExistem dois \"ICMS\" possíveis na base de cálculo:\n\n1. ICMS DESTACADO na nota fiscal — o valor que aparece no campo \"valor do ICMS\" da NF, independente de ter sido pago ou compensado.\n\n2. ICMS RECOLHIDO — o que efetivamente saiu do caixa pro estado, depois de descontar créditos.\n\nO STF foi claro (RE 574.706 + modulação 2021): o que sai da base do PIS/COFINS é o ICMS DESTACADO. Não o recolhido. Não o pago. O destacado.\n\nPor que isso importa pra você?\nEmpresas que apuram pelo ICMS recolhido recuperam MENOS do que poderiam. Em muitos casos, a diferença entre os dois cálculos passa de 30% do crédito total.\n\nSua contabilidade está usando qual base? Vale a pergunta. Vale o diagnóstico.\n\n#consultoriatributaria #tema69 #piscofins #icms #planejamentotributario #recuperacaodecreditos #contabilidade #empresario #lucropresumido #lucroreal #rngc-2026W27-3"
+  },
+  {
+    "number": 15,
+    "title": "Diagnostico 45 minutos",
+    "folder": "post-15-diagnostico-45min",
+    "images": ["slide-1-capa.png","slide-2-quatro-passos.png","slide-3-entregas.png","slide-4-cta.png"],
+    "pin": false,
+    "day": 5,
+    "caption": "Diagnóstico não é mágica nem promessa vaga. É processo.\n\nEm 45 minutos a gente:\n1. Lê os últimos 3 anos de DCTF, EFD-Contribuições e folha de pagamento\n2. Cruza com o portfólio de 15 teses tributárias (PIS/COFINS, IRPJ/CSLL, INSS, ICMS-ST, ITCMD, etc.)\n3. Identifica em quais teses sua empresa tem fundamentação direta\n4. Calcula uma estimativa de recuperação pelos últimos 5 anos (prazo prescricional)\n\nNo final do diagnóstico, você sai com:\n· Lista das teses aplicáveis ao seu caso\n· Estimativa de valor recuperável (com margem de erro declarada)\n· Decisão clara: vale a pena ir adiante? Se sim, proposta. Se não, dizemos com a mesma clareza.\n\nCusto do diagnóstico: zero. Compromisso depois: zero.\n\nA consultoria só vai adiante se houver tese sólida e cliente convencido. Risco compartilhado é o modelo — honorário grande só vence quando o crédito é reconhecido.\n\nDiagnóstico no link da bio.\n\n#consultoriatributaria #diagnostico #recuperacaodecreditos #planejamentotributario #empresario #pme #sorocaba #lucroreal #lucropresumido #riscocompartilhado #rngc-2026W27-4"
+  },
+  {
+    "number": 16,
+    "title": "Provocacao pre-2017",
+    "folder": "post-16-pre-2017",
+    "images": ["slide-1-unica.png"],
+    "pin": false,
+    "day": 5,
+    "caption": "Resposta direta, sem rodeio:\n\nSe a sua empresa:\n- apura PIS/COFINS no Lucro Presumido ou Real\n- vende mercadoria sujeita a ICMS\n- existe desde antes de 15/03/2017\n\nEntão você está dentro do escopo do Tema 69 STF. O cálculo é praticamente automático. Os últimos 5 anos são recuperáveis.\n\nPergunta inevitável: \"se é tão simples, por que minha contabilidade nunca falou disso?\"\n\nTrês respostas honestas:\n1. Contabilidade fiscal opera o dia-a-dia — não é função dela revisar 5 anos pra trás caçando crédito\n2. A recuperação envolve ação judicial ou habilitação administrativa — escopo de consultoria, não de contador\n3. Muitos contadores não querem assumir essa frente porque é trabalhosa e o ganho vai pra outro escritório\n\nNão é crítica ao contador. É divisão de trabalho.\n\nA Renegocia faz a ponte. Diagnóstico gratuito de 45 minutos no link da bio — você sai sabendo SE tem direito e QUANTO vale.\n\n#consultoriatributaria #tema69 #recuperacaodecreditos #piscofins #icms #empresario #pme #lucropresumido #lucroreal #diagnostico #sorocaba #rngc-2026W27-5"
+  },
+  {
+    "number": 17,
+    "title": "LC 224/2025 Lucro Presumido",
+    "folder": "post-17-lc224-lucro-presumido",
+    "images": ["slide-1-capa.png","slide-2-mudanca.png","slide-3-tese.png","slide-4-cta.png"],
+    "pin": false,
+    "day": 5,
+    "caption": "A Lei Complementar 224/2025 elevou em 10% o percentual de presunção do Lucro Presumido pra empresas com faturamento acima de R$ 5 milhões/ano. O efeito: mais IRPJ e CSLL na conta.\n\nA tese de defesa é simples e poderosa:\n· O Lucro Presumido NÃO é benefício fiscal — é técnica de apuração prevista em lei\n· Tratar como benefício e elevar linearmente fere isonomia (CF art. 150, II)\n· Comerciante e prestador de serviço têm margens diferentes — o aumento uniforme ignora isso\n\nA Justiça começou a confirmar a tese: em fevereiro/2026, juíza de SP livrou empresa do aumento (Conjur 10/02/2026). Em maio/2026, especialistas mapearam o terreno (Conjur 20/05/2026).\n\nPra empresário com faturamento entre R$ 5MM e R$ 30MM:\n· Avaliar viabilidade de mandado de segurança preventivo\n· Calcular impacto retroativo desde vigência da LC 224\n· Considerar planejamento de migração de regime (LP → LR) se a conta fechar melhor\n\nA Renegocia faz o diagnóstico da viabilidade. Link na bio.\n\n#consultoriatributaria #lucropresumido #lc224 #planejamentotributario #irpj #csll #pme #empresario #recuperacaotributaria #sorocaba #rngc-2026W27-6"
+  }
+]

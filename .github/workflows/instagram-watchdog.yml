@@ -1,0 +1,82 @@
+name: Instagram Watchdog (auditoria semanal)
+
+# Roda toda segunda 11:00 UTC (08:00 BRT). Audita a semana anterior:
+# - quantos posts foram publicados vs esperado (default 6/sem)
+# - houve duplicata?
+# - token Meta expira em quanto tempo?
+# - quantos catch-ups foram disparados?
+#
+# Exit-code != 0 = abre issue automatica com diagnostico completo.
+
+on:
+  schedule:
+    - cron: '0 11 * * 1'  # segunda 11:00 UTC = 08:00 BRT
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Rodar watchdog
+        id: wd
+        env:
+          IG_ACCESS_TOKEN:           ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID:                ${{ secrets.IG_USER_ID }}
+          EXPECTED_POSTS_PER_WEEK:   '6'
+        continue-on-error: true
+        run: |
+          set +e
+          python3 scripts/watchdog.py > /tmp/wd.json
+          echo "wd_exit=$?" >> $GITHUB_OUTPUT
+          cat /tmp/wd.json
+
+      - name: Issue de alerta (se houver gap)
+        if: steps.wd.outputs.wd_exit != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('/tmp/wd.json', 'utf8'));
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const week = new Date().toISOString().slice(0,10);
+            const alerts = report.alerts || [];
+            const ok = report.ok || [];
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[WATCHDOG] ${week} - ${alerts.length} alerta(s) na semana`,
+              body: [
+                `Auditoria semanal detectou inconsistencias.`,
+                ``,
+                `**Run:** ${runUrl}`,
+                `**Posts publicados nos ultimos 7 dias:** ${report.publicados_7d || 0}`,
+                ``,
+                `## Alertas (${alerts.length})`,
+                '```json',
+                JSON.stringify(alerts, null, 2),
+                '```',
+                ``,
+                `## OK (${ok.length})`,
+                ok.map(x => `- ${x}`).join('\n') || '_nenhum_',
+                ``,
+                `### Acoes recomendadas`,
+                `- Se gap_cronograma: ver post(s) nao publicados em logs do workflow principal`,
+                `- Se token_expira < 30d: renovar token (ver scripts/.env.example)`,
+                `- Se duplicata: investigar idempotencia + retry incorreto`,
+                `- Se muitos_catchups: investigar se cron principal esta saudavel`,
+              ].join('\n'),
+              labels: ['ig-watchdog', 'urgente'],
+            });
