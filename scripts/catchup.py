@@ -51,12 +51,13 @@ def load_env() -> None:
 # Cronograma esperado: (mes, dia, hora_utc) -> numero_post
 # DEVE ser sincronizado com .github/workflows/instagram-scheduled-posts.yml
 SCHEDULE = {
-    (6, 1, 12): 3,
-    (6, 1, 16): 4,
-    (6, 1, 21): 5,
-    (6, 2, 12): 7,
-    (6, 2, 16): 8,
-    (6, 2, 21): 9,
+    # Bundle W24+W25 - atualizado 26/06/2026
+    (6, 29, 21): 12,  # Seg 29/06 - Tema 69 mecanica
+    (6, 30, 21): 13,  # Ter 30/06 - Caso R$ 380k
+    (7, 1, 21):  14,  # Qua 01/07 - ICMS destacado vs recolhido
+    (7, 2, 21):  15,  # Qui 02/07 - Diagnostico 45 min
+    (7, 3, 21):  16,  # Sex 03/07 - Provocacao pre-2017
+    (7, 6, 21):  17,  # Seg 06/07 - LC 224/2025
 }
 
 
