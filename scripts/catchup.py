@@ -1,26 +1,28 @@
 #!/usr/bin/env python3
 """
-Catch-up automatico: detecta posts que deveriam ter saido hoje mas nao sairam,
-e publica como recuperacao. Roda diariamente 23:00 BRT (02:00 UTC).
+Catch-up refatorado 27/07/2026 apos falha silenciosa jul/2026.
 
-Logica:
-1. Carrega cronograma esperado do dia (instagram_posts.json + tabela de cron)
-2. Lista posts realmente publicados nas ultimas 24h via Graph API
-3. Compara: quais posts esperados hoje nao apareceram no IG?
-4. Para cada gap: publica via post_to_instagram.py (com retry, pre-flight, etc.)
-5. Salvaguardas:
-   - Max 2 catch-ups por janela de 7 dias (evita inundacao)
-   - Catch-up so re-tenta posts < 48h de atraso (alem disso, esquecer + alerta)
-   - Idempotencia por hashtag de auditoria mantida
+Design NOVO: detecta por AUSENCIA (nao por SCHEDULE dict).
 
-Output JSON (stdout):
-  {"executed": [...], "skipped": [...], "errors": [...]}
+1. Le instagram_posts.json (fonte de verdade da fila de posts ativos)
+2. Consulta Graph API - historia completa da conta
+3. Compara: quais posts do JSON ainda nao foram publicados?
+4. Se conta ficou > 2 dias sem post E ha posts pendentes na fila -> publica proximo
+5. Notifica via webhook (Discord/Slack) SE NOTIFY_WEBHOOK_URL configurado
+
+Roda diariamente 02:00 UTC (23:00 BRT).
+
+Salvaguardas:
+- Idempotencia (nao publica se conta ja teve post nas ultimas 20h)
+- Rate-limit prudente
+- Log persistente em docs/editorial/audit-log/catchup-history.json
+- Webhook + issue automatica em qualquer inconsistencia
+
+Output JSON stdout: {"action": "...", "post_number": N?, "reason": "..."}
 """
-
 import argparse
 import json
 import os
-import re
 import subprocess
 import sys
 import urllib.parse
@@ -33,70 +35,45 @@ ENV_FILE = ROOT / ".env"
 CONFIG = ROOT / "instagram_posts.json"
 GRAPH = "https://graph.facebook.com/v21.0"
 CATCHUP_LOG = ROOT.parent / "docs" / "editorial" / "audit-log" / "catchup-history.json"
-MAX_CATCHUPS_PER_WEEK = 2
-MAX_LATE_HOURS = 48
+
+DAYS_SILENT_TRIGGER = 2  # se conta ficou >= 2 dias sem post, catch-up dispara
+RECENT_HOURS = 20        # janela de rate-limit
 
 
-def load_env() -> None:
+def load_env():
     if not ENV_FILE.exists():
         return
     for line in ENV_FILE.read_text().splitlines():
         line = line.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
-        key, _, value = line.partition("=")
-        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        k, _, v = line.partition("=")
+        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
-# Cronograma esperado: (mes, dia, hora_utc) -> numero_post
-# DEVE ser sincronizado com .github/workflows/instagram-scheduled-posts.yml
-SCHEDULE = {
-    # Bundle W24+W25 - atualizado 26/06/2026
-    (6, 29, 21): 12,  # Seg 29/06 - Tema 69 mecanica
-    (6, 30, 21): 13,  # Ter 30/06 - Caso R$ 380k
-    (7, 1, 21):  14,  # Qua 01/07 - ICMS destacado vs recolhido
-    (7, 2, 21):  15,  # Qui 02/07 - Diagnostico 45 min
-    (7, 3, 21):  16,  # Sex 03/07 - Provocacao pre-2017
-    (7, 6, 21):  17,  # Seg 06/07 - LC 224/2025
-}
+def parse_ts(raw: str) -> datetime:
+    raw = raw.replace("Z", "+00:00")
+    if len(raw) >= 5 and raw[-5] in "+-" and raw[-3] != ":":
+        raw = raw[:-2] + ":" + raw[-2:]
+    return datetime.fromisoformat(raw)
 
 
-def expected_today(now_utc: datetime) -> list[tuple[int, datetime]]:
-    """Retorna lista de (post_num, horario_esperado_utc) que deveriam ter saido hoje."""
-    today = now_utc.date()
+def fetch_recent_posts(token: str, user_id: str, days: int = 30) -> list[dict]:
+    """Ultimos posts com paginacao."""
     out = []
-    for (m, d, h), num in SCHEDULE.items():
-        scheduled = datetime(now_utc.year, m, d, h, 0, tzinfo=timezone.utc)
-        if scheduled.date() == today:
-            out.append((num, scheduled))
+    url = f"{GRAPH}/{user_id}/media?fields=id,caption,timestamp&limit=100&access_token={urllib.parse.quote(token)}"
+    for _ in range(3):
+        with urllib.request.urlopen(url, timeout=30) as r:
+            resp = json.loads(r.read())
+        for p in resp.get("data", []):
+            out.append({"id": p["id"], "sig": (p.get("caption") or "")[:60].strip(), "ts": parse_ts(p["timestamp"])})
+        nxt = resp.get("paging", {}).get("next")
+        if not nxt: break
+        url = nxt
     return out
 
 
-def fetch_recent_media(token: str, user_id: str, hours: int = 36) -> list[dict]:
-    """Lista posts publicados nas ultimas N horas."""
-    url = (
-        f"{GRAPH}/{user_id}/media"
-        f"?fields=id,caption,timestamp&limit=25&access_token={urllib.parse.quote(token)}"
-    )
-    with urllib.request.urlopen(url, timeout=30) as resp:
-        data = json.loads(resp.read()).get("data", [])
-    cutoff = datetime.now(tz=timezone.utc) - timedelta(hours=hours)
-    out = []
-    for p in data:
-        raw = p["timestamp"].replace("Z", "+00:00")
-        if len(raw) >= 5 and raw[-5] in "+-" and raw[-3] != ":":
-            raw = raw[:-2] + ":" + raw[-2:]
-        ts = datetime.fromisoformat(raw)
-        if ts >= cutoff:
-            out.append({"id": p["id"], "ts": ts, "caption": p.get("caption", "")})
-    return out
-
-
-def caption_signature(caption: str, length: int = 60) -> str:
-    return caption[:length].strip()
-
-
-def load_catchup_history() -> dict:
+def load_log() -> dict:
     if not CATCHUP_LOG.exists():
         return {"runs": []}
     try:
@@ -105,106 +82,104 @@ def load_catchup_history() -> dict:
         return {"runs": []}
 
 
-def save_catchup_history(hist: dict) -> None:
+def save_log(hist: dict):
     CATCHUP_LOG.parent.mkdir(parents=True, exist_ok=True)
     CATCHUP_LOG.write_text(json.dumps(hist, indent=2, default=str))
 
 
-def count_recent_catchups(hist: dict, days: int = 7) -> int:
-    cutoff = datetime.now(tz=timezone.utc) - timedelta(days=days)
-    return sum(
-        1
-        for run in hist.get("runs", [])
-        if datetime.fromisoformat(run["timestamp"]) >= cutoff and run["executed"]
-    )
+def notify_webhook(msg: str):
+    url = os.environ.get("NOTIFY_WEBHOOK_URL")
+    if not url:
+        return
+    try:
+        payload = json.dumps({"content": msg, "text": msg}).encode()
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+        urllib.request.urlopen(req, timeout=10)
+    except Exception as e:
+        print(f"webhook falhou (nao bloqueia): {e}", file=sys.stderr)
 
 
-def main() -> None:
+def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dry-run", action="store_true", help="so detecta, nao publica")
+    parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
     load_env()
     token = os.environ.get("IG_ACCESS_TOKEN")
     user_id = os.environ.get("IG_USER_ID")
     if not (token and user_id):
-        print(json.dumps({"error": "credenciais ausentes", "executed": [], "skipped": [], "errors": ["IG_ACCESS_TOKEN/IG_USER_ID nao definidos"]}))
+        print(json.dumps({"error": "credenciais ausentes"}))
         sys.exit(1)
 
     now = datetime.now(tz=timezone.utc)
-    posts = {p["number"]: p for p in json.loads(CONFIG.read_text())}
+    posts = json.loads(CONFIG.read_text())
+    active_posts = [p for p in posts if not p.get("skip")]
 
-    expected = expected_today(now)
-    if not expected:
-        print(json.dumps({"executed": [], "skipped": ["sem posts esperados hoje"], "errors": []}))
-        return
+    published = fetch_recent_posts(token, user_id)
+    published_sigs = {p["sig"] for p in published}
 
-    recent = fetch_recent_media(token, user_id, hours=36)
-    recent_sigs = {caption_signature(m["caption"]) for m in recent}
+    # Ordena por timestamp desc pra pegar o mais recente
+    latest = max((p["ts"] for p in published), default=None)
+    days_silent = (now - latest).days if latest else 999
 
-    hist = load_catchup_history()
-    recent_catchups = count_recent_catchups(hist, days=7)
+    # Descobre proximo post nao publicado (menor number)
+    next_post = None
+    for post in sorted(active_posts, key=lambda p: p["number"]):
+        sig_json = (post.get("caption") or "")[:60].strip()
+        if sig_json not in published_sigs:
+            next_post = post
+            break
 
-    executed: list[dict] = []
-    skipped: list[dict] = []
-    errors: list[dict] = []
+    result = {
+        "timestamp": now.isoformat(),
+        "days_silent": days_silent,
+        "next_post_pending": next_post["number"] if next_post else None,
+        "action": None,
+        "reason": None,
+    }
 
-    for num, scheduled_at in expected:
-        post = posts.get(num)
-        if not post:
-            errors.append({"post": num, "reason": "ausente do JSON"})
-            continue
-        sig = caption_signature(post["caption"])
-        if sig in recent_sigs:
-            skipped.append({"post": num, "reason": "ja publicado"})
-            continue
-        late_hours = (now - scheduled_at).total_seconds() / 3600
-        if late_hours > MAX_LATE_HOURS:
-            errors.append({"post": num, "reason": f"atrasado {late_hours:.0f}h (> {MAX_LATE_HOURS}h) - desistir"})
-            continue
-        if late_hours < 0:
-            skipped.append({"post": num, "reason": "ainda nao deu hora"})
-            continue
-        if recent_catchups >= MAX_CATCHUPS_PER_WEEK:
-            errors.append({"post": num, "reason": f"limite {MAX_CATCHUPS_PER_WEEK} catchups/sem atingido"})
-            continue
-
+    # Rate-limit: se ja publicou nas ultimas RECENT_HOURS, skip
+    if latest and (now - latest) < timedelta(hours=RECENT_HOURS):
+        result["action"] = "skip"
+        result["reason"] = f"ja publicou ha {(now - latest).total_seconds()/3600:.1f}h (< {RECENT_HOURS}h)"
+    elif not next_post:
+        result["action"] = "skip"
+        result["reason"] = "fila vazia (todos posts ativos ja publicados)"
+    elif days_silent >= DAYS_SILENT_TRIGGER:
+        # Trigger: publica proximo da fila
         if args.dry_run:
-            executed.append({"post": num, "late_hours": late_hours, "would_run": True})
-            continue
+            result["action"] = "would_publish"
+            result["reason"] = f"conta silenciosa ha {days_silent} dias, publicaria post {next_post['number']}"
+        else:
+            try:
+                r = subprocess.run(
+                    [sys.executable, str(ROOT/"post_to_instagram.py"), str(next_post["number"]), "--publish"],
+                    capture_output=True, text=True, timeout=600, cwd=str(ROOT.parent),
+                )
+                if r.returncode == 0:
+                    result["action"] = "published"
+                    result["reason"] = f"catchup publicou post {next_post['number']}"
+                    notify_webhook(f"✅ CATCHUP: Renegocia publicou Post {next_post['number']} (conta estava {days_silent}d silenciosa)")
+                else:
+                    result["action"] = "failed"
+                    result["reason"] = f"post_to_instagram exit {r.returncode}: {r.stderr[-300:]}"
+                    notify_webhook(f"🚨 CATCHUP FALHOU Post {next_post['number']}: {r.stderr[-200:]}")
+            except subprocess.TimeoutExpired:
+                result["action"] = "timeout"
+                result["reason"] = "post_to_instagram timeout 10min"
+                notify_webhook(f"🚨 CATCHUP TIMEOUT Post {next_post['number']}")
+    else:
+        result["action"] = "skip"
+        result["reason"] = f"conta ainda dentro do prazo ({days_silent}d silenciosa, trigger apenas >= {DAYS_SILENT_TRIGGER}d)"
 
-        try:
-            r = subprocess.run(
-                [sys.executable, str(ROOT / "post_to_instagram.py"), str(num), "--publish"],
-                capture_output=True,
-                text=True,
-                timeout=600,
-                cwd=str(ROOT.parent),
-            )
-            if r.returncode == 0:
-                executed.append({"post": num, "late_hours": late_hours, "stdout_tail": r.stdout[-500:]})
-                recent_catchups += 1
-            else:
-                errors.append({"post": num, "reason": f"exit {r.returncode}", "stderr_tail": r.stderr[-500:]})
-        except subprocess.TimeoutExpired:
-            errors.append({"post": num, "reason": "timeout 10min"})
-
-    hist["runs"].append(
-        {
-            "timestamp": now.isoformat(),
-            "executed": executed,
-            "skipped": skipped,
-            "errors": errors,
-            "dry_run": args.dry_run,
-        }
-    )
+    # Log persistente
     if not args.dry_run:
-        save_catchup_history(hist)
+        hist = load_log()
+        hist["runs"].append(result)
+        save_log(hist)
 
-    print(json.dumps({"executed": executed, "skipped": skipped, "errors": errors}, indent=2, default=str))
-
-    if errors:
-        sys.exit(1)
+    print(json.dumps(result, indent=2, default=str))
+    sys.exit(0 if result["action"] in ("published", "skip", "would_publish") else 1)
 
 
 if __name__ == "__main__":

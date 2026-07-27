@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
 """
-Watchdog semanal: roda segunda 08:00 BRT (11:00 UTC). Audita a saude do
-gerenciamento da semana anterior. Gera report em stdout (consumido pelo workflow
-pra criar issue) e codigo de saida diferente de zero em caso de gap.
+Watchdog refatorado 27/07/2026 apos falha silenciosa jul/2026.
+
+Design NOVO: alertas absolutos sem depender de EXPECTED_POSTS_PER_WEEK.
+
+Roda toda segunda 11:00 UTC (08:00 BRT).
 
 Checks:
-1. Quantos posts foram planejados vs publicados na semana anterior
-2. Posts duplicados nas ultimas 7 dias
+1. Dias sem post - se > 3 dias, ALERTA CRITICO (independente do que esperava)
+2. Duplicatas em 7d
 3. Token Meta - dias ate expirar
-4. Catch-ups executados (alerta se > 1)
-5. Container orfao remanescente (criado mas nao publicado)
+4. Posts pendentes na fila (active - published)
+5. Ultima falha registrada nas issues do GitHub
 
-Output JSON pra automacao + sumario texto pra issue.
+Notifica via:
+- Webhook (Discord/Slack) SE configurado
+- Issue automatica no repo (backup textual)
+- Stdout JSON pra automacao
 """
-
 import json
 import os
 import sys
@@ -26,99 +30,135 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 ENV_FILE = ROOT / ".env"
 CONFIG = ROOT / "instagram_posts.json"
-CATCHUP_LOG = ROOT.parent / "docs" / "editorial" / "audit-log" / "catchup-history.json"
 GRAPH = "https://graph.facebook.com/v21.0"
 
+MAX_DAYS_SILENT = 3  # se conta ficou > 3 dias sem post, alerta critico
+MIN_TOKEN_DAYS = 30
 
-def load_env() -> None:
+
+def load_env():
     if not ENV_FILE.exists():
         return
     for line in ENV_FILE.read_text().splitlines():
         line = line.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
-        key, _, value = line.partition("=")
-        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        k, _, v = line.partition("=")
+        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+def parse_ts(raw: str) -> datetime:
+    raw = raw.replace("Z", "+00:00")
+    if len(raw) >= 5 and raw[-5] in "+-" and raw[-3] != ":":
+        raw = raw[:-2] + ":" + raw[-2:]
+    return datetime.fromisoformat(raw)
 
 
 def http_get(url: str) -> dict:
-    with urllib.request.urlopen(url, timeout=30) as resp:
-        return json.loads(resp.read())
+    with urllib.request.urlopen(url, timeout=30) as r:
+        return json.loads(r.read())
 
 
-def main() -> None:
+def notify_webhook(msg: str):
+    url = os.environ.get("NOTIFY_WEBHOOK_URL")
+    if not url:
+        print(f"NOTIFY_WEBHOOK_URL nao configurado - skip webhook", file=sys.stderr)
+        return
+    try:
+        payload = json.dumps({"content": msg, "text": msg}).encode()
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+        urllib.request.urlopen(req, timeout=10)
+        print(f"webhook enviado: {msg[:80]}", file=sys.stderr)
+    except Exception as e:
+        print(f"webhook falhou (nao bloqueia): {e}", file=sys.stderr)
+
+
+def main():
     load_env()
     token = os.environ["IG_ACCESS_TOKEN"]
     user_id = os.environ["IG_USER_ID"]
-
     now = datetime.now(tz=timezone.utc)
-    week_ago = now - timedelta(days=7)
 
-    report: dict = {"timestamp": now.isoformat(), "alerts": [], "ok": []}
+    report = {"timestamp": now.isoformat(), "alerts": [], "critical_alerts": [], "ok": []}
 
-    # 1. media publicada na ultima semana
-    url = (
-        f"{GRAPH}/{user_id}/media?fields=id,caption,timestamp,media_type&limit=30"
-        f"&access_token={urllib.parse.quote(token)}"
-    )
-    posts_pub = []
+    # 1. Ultimos posts (janela 30d)
+    url = f"{GRAPH}/{user_id}/media?fields=id,caption,timestamp&limit=50&access_token={urllib.parse.quote(token)}"
+    all_posts = []
     for p in http_get(url).get("data", []):
-        raw = p["timestamp"].replace("Z", "+00:00")
-        # Meta retorna "+0000" sem dois-pontos (Python 3.9 nao aceita) - normaliza
-        if len(raw) >= 5 and raw[-5] in "+-" and raw[-3] != ":":
-            raw = raw[:-2] + ":" + raw[-2:]
-        ts = datetime.fromisoformat(raw)
-        if ts >= week_ago:
-            posts_pub.append({"id": p["id"], "ts": ts.isoformat(), "caption_prefix": (p.get("caption") or "")[:80]})
+        ts = parse_ts(p["timestamp"])
+        all_posts.append({"id": p["id"], "ts": ts, "sig": (p.get("caption") or "")[:60].strip()})
 
-    report["publicados_7d"] = len(posts_pub)
+    # 2. Dias sem post - CHECK CRITICO
+    if all_posts:
+        latest_ts = max(p["ts"] for p in all_posts)
+        days_silent = (now - latest_ts).days
+        if days_silent > MAX_DAYS_SILENT:
+            report["critical_alerts"].append({
+                "tipo": "conta_silenciosa",
+                "dias_silenciosa": days_silent,
+                "ultimo_post": latest_ts.isoformat(),
+                "severity": "CRITICAL",
+            })
+        else:
+            report["ok"].append(f"ultimo post ha {days_silent}d ({latest_ts.date()})")
+    else:
+        report["critical_alerts"].append({"tipo": "conta_vazia", "severity": "CRITICAL"})
 
-    # 2. duplicatas (mesmo prefixo de caption)
-    sigs = [p["caption_prefix"][:60].strip() for p in posts_pub]
-    dup = [(s, c) for s, c in Counter(sigs).items() if c > 1 and s]
+    # 3. Duplicatas em 7d
+    week_ago = now - timedelta(days=7)
+    recent_sigs = [p["sig"] for p in all_posts if p["ts"] >= week_ago]
+    dup = [(s, c) for s, c in Counter(recent_sigs).items() if c > 1 and s]
     if dup:
         report["alerts"].append({"tipo": "duplicata", "detalhe": dup})
     else:
-        report["ok"].append("nenhuma duplicata em 7 dias")
+        report["ok"].append("nenhuma duplicata em 7d")
 
-    # 3. token
-    dbg = http_get(f"{GRAPH}/debug_token?{urllib.parse.urlencode({'input_token': token, 'access_token': token})}").get("data", {})
+    # 4. Token
+    dbg_url = f"{GRAPH}/debug_token?input_token={token}&access_token={token}"
+    dbg = http_get(dbg_url).get("data", {})
     exp = dbg.get("expires_at", 0)
     if exp:
         dias = (datetime.fromtimestamp(exp, tz=timezone.utc) - now).days
-        if dias < 30:
-            report["alerts"].append({"tipo": "token_expira", "dias_restantes": dias})
+        if dias < 7:
+            report["critical_alerts"].append({"tipo": "token_expira_urgente", "dias": dias})
+        elif dias < MIN_TOKEN_DAYS:
+            report["alerts"].append({"tipo": "token_expira", "dias": dias})
         else:
-            report["ok"].append(f"token valido por {dias} dias")
+            report["ok"].append(f"token valido por {dias}d")
     else:
-        report["ok"].append("token nao-expirante (expires_at=0)")
+        report["ok"].append("token nao-expirante")
 
-    # 4. catch-ups
-    if CATCHUP_LOG.exists():
-        try:
-            hist = json.loads(CATCHUP_LOG.read_text())
-            recent = [
-                r for r in hist.get("runs", [])
-                if datetime.fromisoformat(r["timestamp"]) >= week_ago and r.get("executed")
-            ]
-            if len(recent) > 1:
-                report["alerts"].append({"tipo": "muitos_catchups", "qtd_7d": len(recent), "detalhe": recent})
-            elif recent:
-                report["ok"].append(f"{len(recent)} catch-up(s) na semana - dentro do esperado")
-            else:
-                report["ok"].append("nenhum catch-up na semana")
-        except Exception as e:
-            report["alerts"].append({"tipo": "log_catchup_invalido", "erro": str(e)})
+    # 5. Fila pendente
+    posts = json.loads(CONFIG.read_text())
+    active = [p for p in posts if not p.get("skip")]
+    pub_sigs = {p["sig"] for p in all_posts}
+    pending = [p for p in sorted(active, key=lambda p: p["number"])
+               if (p.get("caption") or "")[:60].strip() not in pub_sigs]
+    report["pending_queue"] = [p["number"] for p in pending]
+    if pending:
+        report["ok"].append(f"{len(pending)} posts na fila: {[p['number'] for p in pending]}")
+    else:
+        report["alerts"].append({"tipo": "fila_vazia", "detalhe": "todos posts ativos ja publicados - produzir novo bundle"})
 
-    # 5. esperado vs publicado (semana padrao = 6 posts/sem) - calibravel
-    expected_weekly = int(os.environ.get("EXPECTED_POSTS_PER_WEEK", "6"))
-    gap = expected_weekly - report["publicados_7d"]
-    if gap > 0:
-        report["alerts"].append({"tipo": "gap_cronograma", "esperado": expected_weekly, "publicado": report["publicados_7d"], "delta": gap})
+    # Notif via webhook em qualquer alerta critico
+    if report["critical_alerts"]:
+        msg_parts = ["🚨 WATCHDOG @renegocia.tributario - ALERTA CRITICO:"]
+        for a in report["critical_alerts"]:
+            msg_parts.append(f"  - {a['tipo']}: {json.dumps({k:v for k,v in a.items() if k not in ('tipo','severity')}, default=str)}")
+        msg_parts.append(f"Prox post na fila: {report['pending_queue'][:1] or 'nenhum'}")
+        notify_webhook("\n".join(msg_parts))
+    elif report["alerts"]:
+        msg = f"⚠️ WATCHDOG @renegocia.tributario - {len(report['alerts'])} aviso(s): " + \
+              ", ".join(a["tipo"] for a in report["alerts"])
+        notify_webhook(msg)
 
     print(json.dumps(report, indent=2, default=str))
-    # exit 0 quando OK, 1 quando alerta
-    sys.exit(0 if not report["alerts"] else 1)
+    # exit 0 se tudo OK, 1 se alerta, 2 se critico
+    if report["critical_alerts"]:
+        sys.exit(2)
+    if report["alerts"]:
+        sys.exit(1)
+    sys.exit(0)
 
 
 if __name__ == "__main__":

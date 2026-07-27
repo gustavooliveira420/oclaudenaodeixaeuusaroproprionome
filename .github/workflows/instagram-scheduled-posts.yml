@@ -1,40 +1,54 @@
 name: Instagram Scheduled Posts
 
-# Cronograma de estreia @renegocia.tributario — 6 posts restantes (3, 4, 5, 7, 8, 9)
-# Posts 1, 2 e 6 já foram publicados em 22-23/05/2026.
-# Horários abaixo em UTC. BRT = UTC - 3.
+# Refatorado 27/07/2026 apos falha silenciosa de 06-07/2026.
 #
-# Mapeamento data/hora UTC → número do post:
-#   01/06 12:00 UTC (09:00 BRT) → post 3  (O que recuperamos)
-#   01/06 16:00 UTC (13:00 BRT) → post 4  (Gancho ICMS Tema 69)
-#   01/06 21:00 UTC (18:00 BRT) → post 5  (Pergunta provocativa)
-#   02/06 12:00 UTC (09:00 BRT) → post 7  (Case R$142k)
-#   02/06 16:00 UTC (13:00 BRT) → post 8  (INSS folha)
-#   02/06 21:00 UTC (18:00 BRT) → post 9  (CTA Diagnóstico)
+# Design a prova de atraso:
+#   - Cron DIARIO (nao datas absolutas) - se um cron falha, o proximo tenta
+#   - Fila automatica via next_post.py - identifica proximo post nao-publicado
+#     via Graph API + comparacao de caption prefix
+#   - Rate-limit prudente - so 1 post por 20h de janela
+#   - Retry via 2 disparos diarios (18h + 21h BRT)
+#   - Notificacao via webhook opcional (Discord/Slack) SE NOTIFY_WEBHOOK_URL configurado
 #
-# Salvaguardas (ver docs/editorial/CONTRATO-SEMANAL.md seção 5):
-#  - Concurrency lock: nunca rodam duas execuções juntas
-#  - Idempotência: aborta se caption do post já apareceu nas últimas 6h
-#  - Notificação: abre issue automática [FALHA-IG] se qualquer step falhar
+# Salvaguardas (ver docs/editorial/SALVAGUARDAS.md):
+#   Camada 0: Concurrency lock (impede execucoes paralelas)
+#   Camada 1: Pre-flight (token, URLs, caption, JSON)
+#   Camada 2: Idempotencia via next_post.py (compara Graph API)
+#   Camada 3: Retry exponencial no post_to_instagram.py
+#   Camada 4: Backup diario as 21:00 UTC (segunda tentativa)
+#   Camada 5: Webhook notif em falha (chega no telefone do usuario)
+#   Camada 6: Issue automatica no repo (backup textual)
+#
+# IMPORTANTE: apos falha silenciosa jul/2026, o Gabriel EXIGE que qualquer
+# Claude que entrar no projeto Renegocia CHEQUE as issues abertas do repo
+# ANTES de qualquer coisa. Ver ~/.claude/projects/-Users-mac/memory/renegocia-instagram-monitoring.md
 
 on:
   schedule:
-    # Cronograma posts 12-17 (atualizado 26/06/2026)
-    # Bundle W24+W25 - 1 post/dia util as 18:00 BRT (21:00 UTC)
-    - cron: '0 21 29 6 *'  # Seg 29/06 - post 12 (Tema 69 mecanica)
-    - cron: '0 21 30 6 *'  # Ter 30/06 - post 13 (Caso R$ 380k)
-    - cron: '0 21 1 7 *'   # Qua 01/07 - post 14 (ICMS destacado vs recolhido)
-    - cron: '0 21 2 7 *'   # Qui 02/07 - post 15 (Diagnostico 45 min)
-    - cron: '0 21 3 7 *'   # Sex 03/07 - post 16 (Provocacao pre-2017)
-    - cron: '0 21 6 7 *'   # Seg 06/07 - post 17 (LC 224/2025)
+    # Publicacao principal 18:00 BRT (21:00 UTC) todo dia util
+    - cron: '0 21 * * 1'   # Seg 18h BRT
+    - cron: '0 21 * * 2'   # Ter 18h BRT
+    - cron: '0 21 * * 3'   # Qua 18h BRT
+    - cron: '0 21 * * 4'   # Qui 18h BRT
+    - cron: '0 21 * * 5'   # Sex 18h BRT
+    # Backup 21:00 BRT (00:00 UTC dia seguinte) se principal falhou
+    - cron: '0 0 * * 2'    # Ter madrugada UTC = seg noite BRT
+    - cron: '0 0 * * 3'
+    - cron: '0 0 * * 4'
+    - cron: '0 0 * * 5'
+    - cron: '0 0 * * 6'
   workflow_dispatch:
     inputs:
       post_number:
-        description: 'Número do post a publicar (1-9). Em branco = decide pelo horário UTC atual.'
+        description: 'Numero especifico do post (em branco = usa fila automatica)'
         required: false
         default: ''
       dry_run:
-        description: 'Dry-run (não publica, só simula)'
+        description: 'Dry-run (nao publica, so simula)'
+        required: false
+        default: 'false'
+      force:
+        description: 'Force: ignora rate-limit de 20h (publica mesmo se ja saiu hoje)'
         required: false
         default: 'false'
 
@@ -49,7 +63,7 @@ permissions:
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,38 +73,44 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Decidir número do post
+      - name: Decidir proximo post via fila automatica
         id: decide
         env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID:      ${{ secrets.IG_USER_ID }}
           INPUT_POST_NUMBER: ${{ github.event.inputs.post_number }}
+          INPUT_FORCE:      ${{ github.event.inputs.force }}
         run: |
-          python3 << 'EOF'
-          import os, datetime, sys
-          override = os.environ.get('INPUT_POST_NUMBER', '').strip()
-          if override:
-              num = int(override)
-              print(f"Post number sobrescrito via dispatch: {num}")
-          else:
-              now = datetime.datetime.utcnow()
-              key = (now.month, now.day, now.hour)
-              mapping = {
-                  # Bundle W24+W25 - atualizado 26/06/2026
-                  (6, 29, 21): 12,  # Seg 29/06 - Tema 69 mecanica
-                  (6, 30, 21): 13,  # Ter 30/06 - Caso R$ 380k
-                  (7, 1, 21):  14,  # Qua 01/07 - ICMS destacado vs recolhido
-                  (7, 2, 21):  15,  # Qui 02/07 - Diagnostico 45 min
-                  (7, 3, 21):  16,  # Sex 03/07 - Provocacao pre-2017
-                  (7, 6, 21):  17,  # Seg 06/07 - LC 224/2025
-              }
-              num = mapping.get(key)
-              if num is None:
-                  sys.exit(f"Nenhum post mapeado para UTC {now.isoformat()} (chave {key}). Workflow disparado fora de cronograma — abortando.")
-              print(f"UTC {now.isoformat()} → post {num}")
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write(f"post_number={num}\n")
-          EOF
+          set +e
+          if [ -n "$INPUT_POST_NUMBER" ]; then
+            echo "Post especificado via dispatch: $INPUT_POST_NUMBER"
+            echo "post_number=$INPUT_POST_NUMBER" >> $GITHUB_OUTPUT
+            echo "skip_reason=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if [ "$INPUT_FORCE" = "true" ]; then
+            python3 scripts/next_post.py --gha --allow-same-day
+          else
+            python3 scripts/next_post.py --gha
+          fi
+          rc=$?
+          if [ $rc -eq 2 ]; then
+            echo "FILA VAZIA - todos os posts do JSON ja foram publicados"
+            echo "skip_reason=fila_vazia" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if [ $rc -eq 3 ]; then
+            echo "SKIP - ja publicou nas ultimas 20h"
+            echo "skip_reason=ja_publicou_hoje" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if [ $rc -ne 0 ]; then
+            echo "FATAL - erro no next_post.py (exit $rc)"
+            exit $rc
+          fi
 
-      - name: Pre-flight (token, imagens, caption, JSON)
+      - name: Pre-flight
+        if: steps.decide.outputs.post_number != ''
         env:
           IG_ACCESS_TOKEN:   ${{ secrets.IG_ACCESS_TOKEN }}
           IG_USER_ID:        ${{ secrets.IG_USER_ID }}
@@ -100,58 +120,16 @@ jobs:
           set +e
           python3 scripts/preflight.py "$POST_NUM"
           rc=$?
-          if [ $rc -eq 0 ]; then echo "preflight: OK"; exit 0; fi
-          if [ $rc -eq 2 ]; then echo "preflight: AVISOS (nao bloqueia)"; exit 0; fi
-          echo "preflight: FATAL"; exit $rc
-
-      - name: Salvaguarda — idempotência (não republicar se já está no IG)
-        id: idempotency
-        env:
-          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-          IG_USER_ID:      ${{ secrets.IG_USER_ID }}
-          POST_NUM:        ${{ steps.decide.outputs.post_number }}
-        run: |
-          python3 << 'EOF'
-          import os, json, urllib.parse, urllib.request, sys
-          from pathlib import Path
-
-          token = os.environ['IG_ACCESS_TOKEN']
-          ig_user = os.environ['IG_USER_ID']
-          num = int(os.environ['POST_NUM'])
-
-          posts = json.loads(Path('scripts/instagram_posts.json').read_text())
-          target = next((p for p in posts if p['number'] == num), None)
-          if not target:
-              sys.exit(f"Post {num} não existe no JSON")
-
-          # primeiros 60 chars da caption como assinatura
-          signature = target['caption'][:60].strip()
-          print(f"Assinatura do post {num}: {signature!r}")
-
-          url = (
-              f"https://graph.facebook.com/v21.0/{ig_user}/media"
-              f"?fields=id,caption,timestamp&limit=15&access_token={urllib.parse.quote(token)}"
-          )
-          with urllib.request.urlopen(url) as resp:
-              data = json.loads(resp.read())
-
-          for p in data.get('data', []):
-              cap = (p.get('caption') or '')[:60].strip()
-              if cap == signature:
-                  print(f"⚠ Post {num} já existe no IG: id={p['id']} ({p['timestamp']})")
-                  print("Abortando publicação (idempotência).")
-                  with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-                      f.write("skip=true\n")
-                  sys.exit(0)
-
-          print(f"✓ Nenhum post recente com a mesma assinatura. Liberado para publicar.")
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write("skip=false\n")
-          EOF
+          if [ $rc -eq 0 ] || [ $rc -eq 2 ]; then
+            echo "preflight: OK ou AVISO"
+            exit 0
+          fi
+          echo "preflight: FATAL (exit $rc)"
+          exit $rc
 
       - name: Publicar post
         id: publish
-        if: steps.idempotency.outputs.skip != 'true'
+        if: steps.decide.outputs.post_number != ''
         env:
           IG_ACCESS_TOKEN:   ${{ secrets.IG_ACCESS_TOKEN }}
           IG_USER_ID:        ${{ secrets.IG_USER_ID }}
@@ -160,73 +138,41 @@ jobs:
           DRY_RUN:           ${{ github.event.inputs.dry_run }}
         run: |
           if [ "$DRY_RUN" = "true" ]; then
-            echo "=== DRY-RUN do post $POST_NUM ==="
+            echo "=== DRY-RUN Post $POST_NUM ==="
             python3 scripts/post_to_instagram.py "$POST_NUM"
           else
-            echo "=== Publicando post $POST_NUM ==="
+            echo "=== Publicando Post $POST_NUM ==="
             python3 scripts/post_to_instagram.py "$POST_NUM" --publish
           fi
 
-      - name: Pos-verify (compara caption real x esperada)
-        if: steps.publish.outcome == 'success' && github.event.inputs.dry_run != 'true' && steps.idempotency.outputs.skip != 'true'
+      - name: Notificar webhook externo em falha
+        if: failure()
         env:
-          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-          IG_USER_ID:      ${{ secrets.IG_USER_ID }}
-          POST_NUM:        ${{ steps.decide.outputs.post_number }}
+          NOTIFY_WEBHOOK_URL: ${{ secrets.NOTIFY_WEBHOOK_URL }}
+          POST_NUM: ${{ steps.decide.outputs.post_number }}
         run: |
-          python3 << 'EOF'
-          import os, json, urllib.parse, urllib.request, time, sys
-          from pathlib import Path
-          token = os.environ['IG_ACCESS_TOKEN']
-          user = os.environ['IG_USER_ID']
-          num = int(os.environ['POST_NUM'])
-          esperado = next(p for p in json.loads(Path('scripts/instagram_posts.json').read_text()) if p['number'] == num)
-          esperado_prefix = esperado['caption'][:80].strip()
-          time.sleep(15)  # Meta leva alguns segundos pra refletir
-          url = f"https://graph.facebook.com/v21.0/{user}/media?fields=id,caption,timestamp&limit=3&access_token={urllib.parse.quote(token)}"
-          with urllib.request.urlopen(url, timeout=30) as r:
-              data = json.loads(r.read()).get('data', [])
-          if not data:
-              print("AVISO: API nao retornou nenhum media - nao da pra verificar")
-              sys.exit(0)
-          ultimo = data[0]
-          cap = (ultimo.get('caption') or '')[:80].strip()
-          if cap == esperado_prefix:
-              print(f"OK pos-verify - caption confere (id={ultimo['id']})")
-          else:
-              print(f"AVISO pos-verify - caption divergiu:")
-              print(f"  esperado: {esperado_prefix!r}")
-              print(f"  publicado: {cap!r}")
-              # nao falha o workflow - so registra
-          EOF
+          if [ -z "$NOTIFY_WEBHOOK_URL" ]; then
+            echo "NOTIFY_WEBHOOK_URL nao configurado - pulando notificacao externa"
+            exit 0
+          fi
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          MSG="🚨 FALHA IG @renegocia.tributario - Post ${POST_NUM:-?} nao publicou. Ver: ${RUN_URL}"
+          # Formato compativel com Discord/Slack incoming webhook
+          curl -sSL -X POST -H "Content-Type: application/json" \
+            -d "{\"content\":\"${MSG}\",\"text\":\"${MSG}\"}" \
+            "$NOTIFY_WEBHOOK_URL" || echo "webhook falhou (nao bloqueia)"
 
-      - name: Notificar falha por issue
+      - name: Issue automatica em falha (backup textual)
         if: failure()
         uses: actions/github-script@v7
         with:
           script: |
-            const postNum = '${{ steps.decide.outputs.post_number }}' || 'desconhecido';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const now = new Date().toISOString();
+            const postNum = '${{ steps.decide.outputs.post_number }}' || '?';
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `[FALHA-IG] ${now} post ${postNum}`,
-              body: [
-                `O workflow de publicação automática do Instagram falhou.`,
-                ``,
-                `- **Post:** ${postNum}`,
-                `- **Quando:** ${now}`,
-                `- **Run:** ${runUrl}`,
-                ``,
-                `Abrir o Run pra ver o log do step que falhou. Causas comuns:`,
-                ``,
-                `- Token Meta expirado → renovar (ver scripts/.env.example)`,
-                `- Imagem fora do ar (raw.githubusercontent.com) → checar repo público das imagens`,
-                `- Limite Graph API atingido → aguardar 1h e disparar via workflow_dispatch`,
-                `- Caption acima de 2200 chars → revisar instagram_posts.json`,
-                ``,
-                `Quando consertar, disparar manualmente via: Actions → Instagram Scheduled Posts → Run workflow → post_number=${postNum}`,
-              ].join('\n'),
+              title: `[FALHA-IG] ${new Date().toISOString()} post ${postNum}`,
+              body: `Workflow falhou em publicar post ${postNum}.\n\n**Run:** ${runUrl}\n\nVerificar step com X vermelho.`,
               labels: ['ig-falha', 'urgente'],
             });
